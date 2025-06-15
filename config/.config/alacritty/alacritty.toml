@@ -1,0 +1,14 @@
+[env]
+WINIT_X11_SCALE_FACTOR = "1.66"
+
+[window]
+opacity = 0.95
+padding = { x = 3, y = 3 }
+dynamic_padding = true
+
+[font]
+size = 7.5
+
+[font.normal]
+family = "UbuntuMono Nerd Font"
+style = "Regular"
