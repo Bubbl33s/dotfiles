@@ -1,0 +1,7 @@
+picom &
+volumeicon &
+udiskie -t &
+nm-applet &
+cbatticon &
+pulseaudio &
+systemctl restart NetworkManager &
