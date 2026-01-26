@@ -45,6 +45,7 @@ def start_apps():
     subprocess.Popen(["setxkbmap -layout us,latam -option grp:win_space_toggle"])
     subprocess.Popen(["picom &"])
     subprocess.Popen(["systemctl restart NetworkManager"])
+    subprocess.Popen(['Rblueman-applet'])
 
 keys = [
     # A list of available commands that can be bound to keys can be found
@@ -67,8 +68,8 @@ keys = [
     # will be to screen edge - window would shrink.
     Key([mod, "control"], "h", lazy.layout.grow_left(), desc="Grow window to the left"),
     Key([mod, "control"], "l", lazy.layout.grow_right(), desc="Grow window to the right"),
-    Key([mod, "control"], "j", lazy.layout.grow_down(), desc="Grow window down"),
-    Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
+    Key([mod, "control"], "j", lazy.layout.shrink_main(), desc="Grow window down"),
+    Key([mod, "control"], "k", lazy.layout.grow_main(), desc="Grow window up"),
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
     # Toggle between split and unsplit sides of stack.
     # Split = all windows displayed
@@ -134,7 +135,7 @@ for vt in range(1, 8):
         )
     )
 
-groups = [Group(i) for i in [" ", " ", " ", " ", " ", " ", " ", " ", "󰊗 "]]
+groups = [Group(i) for i in [" ", " ", " ", " ", " ", " ", " ", " ", "󰊗 "]]
 
 for i, group in enumerate(groups):
     actual_key = str(i + 1)
@@ -174,7 +175,6 @@ colors = {
 
 layouts = [
     # layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=4),
-    layout.Max(margin=8, border_normal=colors["color4"], border_focus=colors["color2"], border_width=4),
     # Try more layouts by unleashing below layouts.
     # layout.Stack(num_stacks=2),
     # layout.Bsp(),
@@ -186,14 +186,8 @@ layouts = [
     # layout.TreeTab(),
     # layout.VerticalTile(),
     # layout.Zoomy(),
+    layout.Max(margin=8, border_normal=colors["color4"], border_focus=colors["color2"], border_width=4),
 ]
-
-floating_layout = layout.Floating(
-    float_rules=[
-        *layout.Floating.default_float_rules,
-        Match(wm_class='cv2.imshow'),
-    ]
-)
 
 widget_defaults = dict(
     font="UbuntuMono Nerd Font",
@@ -241,7 +235,7 @@ screens = [
                 widget.Sep(padding=10, foreground=colors["color2"], background=colors["color2"]),
                 widget.TextBox("◀", fontsize=32, padding=-4, foreground=colors["color3"], background=colors["color2"]),
                 widget.Sep(padding=10, foreground=colors["color3"], background=colors["color3"]),
-                widget.CurrentLayoutIcon(foreground=colors["light"], background=colors["color3"]),
+                # widget.CurrentLayoutIcon(foreground=colors["light"], background=colors["color3"]),
                 widget.CurrentLayout(foreground=colors["light"], background=colors["color3"]),
                 widget.Sep(padding=10, foreground=colors["color3"], background=colors["color3"]),
                 widget.TextBox(" ", foreground=colors["light"], background=colors["color3"]),
@@ -293,7 +287,7 @@ screens = [
                 ),
                 widget.TextBox("◀", fontsize=32, padding=-4, foreground=colors["color3"], background=colors["dark"]),
                 widget.Sep(padding=10, foreground=colors["color3"], background=colors["color3"]),
-                widget.CurrentLayoutIcon(foreground=colors["light"], background=colors["color3"]),
+                # widget.CurrentLayoutIcon(foreground=colors["light"], background=colors["color3"]),
                 widget.CurrentLayout(foreground=colors["light"], background=colors["color3"]),
                 widget.Sep(padding=10, foreground=colors["color3"], background=colors["color3"]),
                 widget.TextBox(" ", foreground=colors["light"], background=colors["color3"]),
@@ -340,6 +334,7 @@ floating_layout = layout.Floating(
         Match(wm_class="ssh-askpass"),  # ssh-askpass
         Match(title="branchdialog"),  # gitk
         Match(title="pinentry"),  # GPG key password entry
+        Match(wm_class='cv2.imshow'),
     ]
 )
 auto_fullscreen = True
