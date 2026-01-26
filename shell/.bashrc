@@ -158,3 +158,6 @@ neofetch
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Created by `pipx` on 2025-06-28 13:09:24
+export PATH="$PATH:/home/bubbles/.local/bin"
