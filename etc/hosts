@@ -1,0 +1,9 @@
+# Static table lookup for hostnames.
+# See hosts(5) for details.
+#
+# 127.0.0.1 localhost
+# ::1       localhost
+# 127.0.1.1 bubbles
+# 127.0.0.1   boot-q61qebhj.c1.kafka-serverless.us-east-2.amazonaws.com
+# 127.0.0.1   b83-q61qebhj.c1.kafka-serverless.us-east-2.amazonaws.com
+# 127.0.0.1   b101-q61qebhj.c1.kafka-serverless.us-east-2.amazonaws.com
