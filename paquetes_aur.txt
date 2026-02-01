@@ -1,0 +1,16 @@
+anydesk-bin
+brave-bin
+debtap
+docker-desktop
+docker-desktop-debug
+google-chrome
+jetbrains-toolbox
+neofetch
+pixelorama
+polychromatic
+slack-desktop
+ttf-meslo-nerd-font-powerlevel10k
+visual-studio-code-bin
+yay
+yay-debug
+zoom
