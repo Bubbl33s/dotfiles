@@ -5,11 +5,11 @@ case $- in
 esac
 
 # Path to your oh-my-bash installation.
-export OSH='/home/bubbles/.oh-my-bash'
+# export OSH="$HOME/.oh-my-bash"
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-bash is loaded.
-OSH_THEME="agnoster"
+# OSH_THEME="agnoster"
 
 # If you set OSH_THEME to "random", you can ignore themes you don't like.
 # OMB_THEME_RANDOM_IGNORED=("powerbash10k" "wanelo")
@@ -73,7 +73,7 @@ OSH_THEME="agnoster"
 
 # To disable the uses of "sudo" by oh-my-bash, please set "false" to
 # this variable.  The default behavior for the empty value is "true".
-OMB_USE_SUDO=true
+# OMB_USE_SUDO=true
 
 # To enable/disable display of Python virtualenv and condaenv
 # OMB_PROMPT_SHOW_PYTHON_VENV=true  # enable
@@ -117,7 +117,7 @@ plugins=(
 #      plugins+=(tmux-autoattach)
 #  fi
 
-source "$OSH"/oh-my-bash.sh
+# source "$OSH"/oh-my-bash.sh
 
 # User configuration
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -133,7 +133,20 @@ source "$OSH"/oh-my-bash.sh
 # fi
 
 # Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+# e
+alias restart-network='sudo systemctl restart NetworkManager'
+#source ~/anaconda3/etc/profile.d/conda.sh
+# export PATH=$PATH:/usr/lib/w3m/w3mimgdisplay
+
+neofetch
+
+# export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Created by `pipx` on 2025-06-28 13:09:24
+#export PATH="$PATH:/home/bubbles/.local/bin"
+export ARCHFLAGS="-arch x86_64"
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
@@ -149,15 +162,32 @@ source "$OSH"/oh-my-bash.sh
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
-alias restart-network='sudo systemctl restart NetworkManager'
-source ~/anaconda3/etc/profile.d/conda.sh
-export PATH=$PATH:/usr/lib/w3m/w3mimgdisplay
 
-neofetch
+# Iniciar Oh My Posh
+eval "$(oh-my-posh init bash --config /usr/share/oh-my-posh/themes/velvet.omp.json)"
+shopt -s nocaseglob
+# No guardar comandos duplicados ni los que empiezan con espacio
+export HISTCONTROL=ignoreboth
+# Historial gigante para no perder nada
+export HISTSIZE=10000
+export HISTFILESIZE=20000
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+source /usr/share/nvm/init-nvm.sh
 
-# Created by `pipx` on 2025-06-28 13:09:24
-export PATH="$PATH:/home/bubbles/.local/bin"
+# Git bash completion
+if [ -f /usr/share/bash-completion/completions/git ]; then
+    source /usr/share/bash-completion/completions/git
+fi
+
+# Reemplazar ls con eza para tener iconos y colores
+alias ls='eza --icons --group-directories-first'
+alias ll='eza -l --icons --git --group-directories-first'
+alias la='eza -la --icons --git --group-directories-first'
+alias tree='eza --tree --icons'
+
+export LS_COLORS="$(vivid generate dracula)"
+export PATH="$HOME/.local/bin:$PATH"
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
