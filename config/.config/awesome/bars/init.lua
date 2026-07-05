@@ -71,4 +71,14 @@ screen.connect_signal("request::desktop_decoration", function(s)
         } or nil,
         widget   = vertical_content,
     }
+
+    -- Verified live via awesome-client: awful.wibar's own placement/stretch
+    -- logic overrides the `width` given above at construction time,
+    -- expanding it to nearly the full screen width instead of the 30px
+    -- thickness requested (this is what caused the bar to render as wide
+    -- horizontal stripes and left no reserved workarea space on the side).
+    -- Re-asserting width right after construction re-triggers placement
+    -- with the correct value and fixes both the rendering and the
+    -- reserved tiling space.
+    s.myverticalwibox.width = beautiful.wibar_height
 end)
