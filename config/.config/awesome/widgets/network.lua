@@ -111,6 +111,7 @@ end
 function M.new()
     local net_text = wibox.widget {
         font   = beautiful.font,
+        align  = "center",
         widget = wibox.widget.textbox,
     }
 

@@ -39,6 +39,12 @@ icons.disconnected = "󰤮 "
 icons.wifi_no_internet = "󰤟 "
 icons.wired_no_internet = "󰈂 "
 
+-- Bluetooth tiers (widgets/bluetooth.lua): adapter off, adapter on but
+-- nothing paired/connected, and a device actually connected
+icons.bluetooth_off       = ""
+icons.bluetooth_on        = ""
+icons.bluetooth_connected = ""
+
 -- Volume tiers
 icons.volume_low  = "󰕿 "
 icons.volume_mid  = "󰖀 "
@@ -99,8 +105,8 @@ icons.clock_11 = "󱑕 "
 icons.clock_12 = "󱑖 "
 
 ---------------------------------------------
--- App -> icon lookup for the middle bar (bars/middle.lua), keyed by the
--- focused client's WM_CLASS. This does NOT hold its own glyph table:
+-- App -> icon lookup for the focused-client tasklist (bars/left.lua), keyed
+-- by the focused client's WM_CLASS. This does NOT hold its own glyph table:
 -- it reads ~/.config/rofi/app-icons.map, the same file the rofi custom
 -- launcher (nerdfont-launcher.py) uses -- one place to paste each glyph
 -- instead of duplicating them here by hand. See that file's header for

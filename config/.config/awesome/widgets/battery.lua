@@ -57,17 +57,25 @@ local function battery_tier_icon(capacity, status)
     return icons["battery_" .. tier .. (charging and "_charging" or "")]
 end
 
--- Constructs the battery widget: a wibox.widget.textbox updated in place by
--- a gears.timer. Returns nil when no battery device is present so callers
--- (bars/right.lua) can omit the widget entirely.
+-- Constructs the battery widget: icon on top, percentage label below --
+-- stacked vertically since this widget only ever lives in the vertical
+-- side bar now. Updated in place by a gears.timer. Returns nil when no
+-- battery device is present so callers (bars/vertical.lua) can omit the
+-- widget entirely.
 function M.new()
     local battery_path = find_battery_path()
     if not battery_path then
         return nil
     end
 
-    local battery_text = wibox.widget {
+    local battery_icon = wibox.widget {
         font   = beautiful.font,
+        align  = "center",
+        widget = wibox.widget.textbox,
+    }
+    local battery_pct = wibox.widget {
+        font   = beautiful.font,
+        align  = "center",
         widget = wibox.widget.textbox,
     }
 
@@ -80,7 +88,8 @@ function M.new()
             return
         end
 
-        battery_text.text = battery_tier_icon(capacity, status)
+        battery_icon.text = battery_tier_icon(capacity, status)
+        battery_pct.text = capacity .. "%"
     end
 
     gears.timer {
@@ -92,7 +101,11 @@ function M.new()
         end,
     }
 
-    return battery_text
+    return wibox.widget {
+        layout = wibox.layout.fixed.vertical,
+        battery_icon,
+        battery_pct,
+    }
 end
 
 return M

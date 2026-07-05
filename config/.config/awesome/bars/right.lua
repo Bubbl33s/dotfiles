@@ -1,9 +1,9 @@
 ---------------------------------------------
--- Right bar zone: systray, connectivity, volume, layout, keyboard layout,
--- calendar/date, clock/time, battery, power menu (in that order -- battery
--- and the power button sit at the far right end). Returns plain content
--- (no own background/shape) -- the single joined wibar in bars/init.lua
--- owns the one shared background for the whole bar.
+-- Right bar zone: layout name, calendar/date, clock/time, power menu (in
+-- that order). wifi/volume/battery/keyboard-layout/bluetooth moved out to
+-- bars/vertical.lua. Returns plain content (no own background/shape) --
+-- the single joined wibar in bars/init.lua owns the one shared background
+-- for the whole bar.
 ---------------------------------------------
 
 local awful = require("awful")
@@ -14,49 +14,10 @@ local icons = require("theme.icons")
 local dpi = require("beautiful.xresources").apply_dpi
 local arrows = require("theme.arrows")
 
-local network_widget = require("widgets.network")
-local volume_widget  = require("widgets.volume")
-local battery_widget = require("widgets.battery")
-local power_widget   = require("widgets.power")
+local power_widget = require("widgets.power")
 
 local M = {}
 local colors = beautiful.palette
-
--- Keyboard layout and clock are shared, single-instance widgets reused
--- across every screen's right segment -- same pattern the pre-refactor
--- rc.lua used (one KEYBOARD_LAYOUT/textclock widget placed on both bars).
-KEYBOARD_LAYOUT = awful.widget.keyboardlayout()
-KEYBOARD_LAYOUT.widget.font = beautiful.font_family_bold .. " 12"
-
--- Fixed width, wide enough for the longest configured layout label
--- ("latam") -- without this, switching from "us" (2 chars) to "latam"
--- (5 chars) resizes the widget and shifts everything after it (the clock).
--- wibox.container.place sizes its child to its own natural (fit) size
--- instead of filling the row -- unlike a plain textbox, it does NOT
--- default to vertical centering, so halign/valign must be set explicitly
--- or the label renders pinned to the top of the bar (looks "floating").
-local KEYBOARD_LAYOUT_WIDTH = dpi(56)
-local keyboard_layout_place = wibox.container.place(KEYBOARD_LAYOUT)
-keyboard_layout_place.halign = "center"
-keyboard_layout_place.valign = "center"
-
--- Geometric centering above still leaves it a couple px high: its font
--- (font_family_bold 12) has different ascent/descent than the sibling
--- widgets' font, so equal box-centering doesn't mean equal visual
--- baseline. Nudge down with a top pad -- adjust by +-1/2px if it still
--- looks off on your display.
-local keyboard_layout_nudged = wibox.widget {
-    keyboard_layout_place,
-    top    = dpi(2),
-    widget = wibox.container.margin,
-}
-
-local keyboard_layout_fixed = wibox.widget {
-    keyboard_layout_nudged,
-    width    = KEYBOARD_LAYOUT_WIDTH,
-    strategy = "exact",
-    widget   = wibox.container.constraint,
-}
 
 -- Date and time as two separate textclocks so each can carry its own icon
 -- (calendar / analog clock face) instead of one shared prefix.
@@ -88,13 +49,8 @@ gears.timer {
     callback  = update_time_icon,
 }
 
--- Connectivity, volume, and battery are also single, shared, system-wide
--- widget instances -- one polling timer each, reused wherever they're
--- placed, instead of a duplicate timer per screen.
-local net_widget     = network_widget.new()
-local vol_widget     = volume_widget.new()
-local bat_widget     = battery_widget.new() -- may be nil -- no battery present
-local pow_widget     = power_widget.new()
+-- Power is also a single, shared, system-wide widget instance.
+local pow_widget = power_widget.new()
 
 -- Wraps one or more widgets in ONE shared rounded background pill, instead
 -- of each getting its own separate pill -- giving each widget its own
@@ -115,7 +71,7 @@ local pow_widget     = power_widget.new()
 -- transparent to whatever sits behind it (the bar's own dark bg), showing
 -- as a mismatched stripe between pills. This way the gap is filled with
 -- this same pill's `bg` color, exactly like the internal spacing between
--- widgets grouped in one pill (e.g. wifi+volume) already is.
+-- multiple widgets grouped in one pill already is.
 -- A plain solid-color spacer, same idea as the `gap` padding inside
 -- bar_pill() above but for standalone widgets that aren't a pill (like
 -- arrows.lua's separators) -- wibox.container.margin would leave this
@@ -165,10 +121,8 @@ local function build_layoutname(s)
     return tb
 end
 
--- Factory: builds the right segment for screen `s`. `is_primary` controls
--- whether systray and the connectivity widget are included (secondary
--- screens omit both, consistent with the pre-refactor behavior).
-function M.build_right(s, is_primary)
+-- Factory: builds the right segment for screen `s`.
+function M.build_right(s)
     s.mylayoutname = build_layoutname(s)
     local head_arrow = arrows.outlined_left_arrow(colors.d, colors.c4)
     local tail_arrow = arrows.outlined_right_arrow(colors.d, colors.c4)
@@ -181,38 +135,10 @@ function M.build_right(s, is_primary)
     }
 
     items[#items + 1] = tail_arrow
-    -- Space between tail_arrow and the wifi/volume pill -- edit this width.
+    -- Space between tail_arrow and the layout-name pill -- edit this width.
     items[#items + 1] = colored_gap(dpi(10), colors.c4)
 
-    -- Each of net_widget/vol_widget/bat_widget already renders a single
-    -- state-tiered nerdfont glyph (e.g. icons.wifi_2, icons.volume_high,
-    -- icons.battery_50) as its own text, so no separate icon prefix is
-    -- layered on top of them here.
-    local net_vol = {}
-    if is_primary then
-        --net_vol[#net_vol + 1] = wibox.widget.systray()
-        net_vol[#net_vol + 1] = net_widget
-    end
-    if vol_widget then
-        net_vol[#net_vol + 1] = vol_widget
-    end
-    if #net_vol > 0 then
-        items[#items + 1] = bar_pill(net_vol, beautiful.icon_bg, dpi(10))
-    end
-
     items[#items + 1] = bar_pill({ s.mylayoutname }, beautiful.layoutname_bg, dpi(10))
-    items[#items + 1] = bar_pill({
-        wibox.widget {
-            layout  = wibox.layout.fixed.horizontal,
-            spacing = dpi(4),
-            wibox.widget {
-                text   = icons.keyboard,
-                font   = beautiful.font,
-                widget = wibox.widget.textbox,
-            },
-            keyboard_layout_fixed,
-        },
-    }, beautiful.kblayout_bg, dpi(10))
     items[#items + 1] = bar_pill({
         wibox.widget {
             layout  = wibox.layout.fixed.horizontal,
@@ -233,13 +159,6 @@ function M.build_right(s, is_primary)
             time_clock,
         },
     }, beautiful.time_bg, dpi(10))
-
-    -- Battery sits right before the power button, at the far end of the
-    -- bar -- each its own separate pill (unlike net_vol above, these two
-    -- are NOT meant to share one background).
-    if bat_widget then
-        items[#items + 1] = bar_pill({ bat_widget }, beautiful.battery_bg, dpi(10))
-    end
 
     items[#items + 1] = head_arrow
     items[#items + 1] = bar_pill({ pow_widget }, beautiful.power_bg, 0)
