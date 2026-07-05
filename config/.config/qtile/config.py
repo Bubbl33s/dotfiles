@@ -32,13 +32,15 @@ from libqtile.widget import KeyboardLayout
 from libqtile import hook
 import subprocess
 
-# base = lambda fg="text", bg="dark": {
-#     "foreground": colors[fg],
-#     "background": colors[bg],
-# }
+from resources.arrows import single_left_arrow, single_left_flame, outlined_left_arrow, outlined_right_arrow
+from resources.colors import PINK_PALETTE, BLACK_RED_PALETTE, DARK_RED_PASTEL_PALETTE
 
 mod = "mod4"
 terminal = guess_terminal()
+
+DEFAULT_FONT = "UbuntuMono Nerd Font"
+COLORS = DARK_RED_PASTEL_PALETTE
+WALLPAPER_ROUTE = "/home/bubbles/Pictures/bg/1329229.png"
 
 @hook.subscribe.startup_once
 def start_apps():
@@ -135,7 +137,7 @@ for vt in range(1, 8):
         )
     )
 
-groups = [Group(i) for i in [" ", " ", " ", " ", " ", " ", " ", " ", "󰊗 "]]
+groups = [Group(name=str(i), label="󰫤 ") for i in range(1, 10)]
 
 for i, group in enumerate(groups):
     actual_key = str(i + 1)
@@ -149,29 +151,14 @@ for i, group in enumerate(groups):
                 lazy.group[group.name].toscreen(),
                 desc=f"Switch to group {group.name}",
             ),
-            # mod + shift + group number = switch to & move focused window to group
             Key(
                 [mod, "shift"],
                 actual_key,
                 lazy.window.togroup(group.name, switch_group=True),
                 desc=f"Switch to & move focused window to group {group.name}",
             ),
-            # Or, use below if you prefer not to switch to that group.
-            # # mod + shift + group number = move focused window to group
-            # Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
-            #     desc="move focused window to group {}".format(i.name)),
         ]
     )
-
-colors = {
-    "light": ["#e0bbd2", "#e0bbd2"],
-    "dark": ["#13000a","#13000a"],
-    "text": ["#cf91b5", "#cf91b5"],
-    "color1": ["#bf6b99", "#bf6b99"],
-    "color2": ["#b33b72", "#b33b72"],
-    "color3": ["#8e3563", "#8e3563"],
-    "color4": ["#572649", "#572649"],
-}
 
 layouts = [
     # layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=4),
@@ -179,18 +166,18 @@ layouts = [
     # layout.Stack(num_stacks=2),
     # layout.Bsp(),
     # layout.Matrix(),
-    layout.MonadTall(margin=8, border_normal=colors["color4"], border_focus=colors["color2"], border_width=4),
-    layout.MonadWide(margin=8, border_normal=colors["color4"], border_focus=colors["color2"], border_width=4),
+    layout.MonadTall(margin=8, border_normal=COLORS["c4"], border_focus=COLORS["c2"], border_width=4),
+    layout.MonadWide(margin=8, border_normal=COLORS["c4"], border_focus=COLORS["c2"], border_width=4),
     # layout.RatioTile(),
     # layout.Tile(),
     # layout.TreeTab(),
     # layout.VerticalTile(),
     # layout.Zoomy(),
-    layout.Max(margin=8, border_normal=colors["color4"], border_focus=colors["color2"], border_width=4),
+    layout.Max(margin=8, border_normal=COLORS["c4"], border_focus=COLORS["c2"], border_width=4),
 ]
 
 widget_defaults = dict(
-    font="UbuntuMono Nerd Font",
+    font=DEFAULT_FONT,
     fontsize=16,
     padding=3,
 )
@@ -200,113 +187,126 @@ screens = [
     Screen(
         top=bar.Bar(
             [
+                widget.Spacer(
+                    length=10,
+                    background=COLORS["d"],
+                ),
+                widget.TextBox(" ", fontsize=18, foreground=COLORS["l"], background=COLORS["d"]),
+                widget.Spacer(
+                    length=2,
+                    background=COLORS["d"],
+                ),
+                *outlined_right_arrow(COLORS["d"], COLORS["c4"]),
+                widget.Spacer(
+                    length=10,
+                    background=COLORS["c4"],
+                ),
                 widget.GroupBox(
-                    foreground=colors["light"],
-                    background=colors["dark"],
-                    font="UbuntuMono Nerd Font",
-                    fontsize=19,
-                    margin_y=3,
-                    margin_x=0,
-                    padding_y=8,
-                    padding_x=5,
+                    # foreground=COLORS["c1"],
+                    background=COLORS["c4"],
+                    font=DEFAULT_FONT,
+                    fontsize=18,
+                    margin=0,
+                    padding_x=0,
+                    padding_y=2,
                     borderWidth=1,
-                    active=colors["light"],
-                    inactive=colors["color4"],
+                    active=COLORS["c1"],
+                    inactive=COLORS["d"], # INACTIVE
                     rounded=False,
-                    highlight_method="block",
-                    this_current_screen_border=colors["color2"],
-                    this_screen_border=colors["color1"],
-                    other_current_screen_border=colors["dark"],
-                    other_screen_border=colors["dark"],
+                    highlight_method="text",
+                    this_current_screen_border=COLORS["l"], # CURRENT
+                    other_current_screen_border=COLORS["d"],
+                    other_screen_border=COLORS["d"],
                 ),
                 widget.WindowName(
-                    foreground=colors["color2"],
-                    background=colors["dark"],
+                    foreground=COLORS["c2"],
+                    background=COLORS["d"],
                     fontsize=13,
                     font="UbuntuMono Nerd Font Bold",
                 ),
-                widget.TextBox("◀", fontsize=32, padding=-4, foreground=colors["color1"], background=colors["dark"]),
-                widget.Systray(padding=10, background=colors["color1"]),
-                widget.Sep(padding=10, foreground=colors["color1"], background=colors["color1"]),
-                widget.TextBox("◀", fontsize=32, padding=-4, foreground=colors["color2"], background=colors["color1"]),
-                widget.Sep(padding=10, foreground=colors["color2"], background=colors["color2"]),
-                widget.TextBox("󱚻 ", foreground=colors["light"], background=colors["color2"]),
-                widget.Net(background=colors["color2"], interface='wlo1'),
-                widget.Sep(padding=10, foreground=colors["color2"], background=colors["color2"]),
-                widget.TextBox("◀", fontsize=32, padding=-4, foreground=colors["color3"], background=colors["color2"]),
-                widget.Sep(padding=10, foreground=colors["color3"], background=colors["color3"]),
-                # widget.CurrentLayoutIcon(foreground=colors["light"], background=colors["color3"]),
-                widget.CurrentLayout(foreground=colors["light"], background=colors["color3"]),
-                widget.Sep(padding=10, foreground=colors["color3"], background=colors["color3"]),
-                widget.TextBox(" ", foreground=colors["light"], background=colors["color3"]),
-                widget.KeyboardLayout(font="UbuntuMono Nerd Font Bold", configured_keyboards=['us', 'latam'], foreground=colors["light"], background=colors["color3"]),
-                widget.Sep(padding=10, foreground=colors["color3"], background=colors["color3"]),
-                widget.TextBox("◀", fontsize=32, padding=-4, foreground=colors["color4"], background=colors["color3"]),
-                widget.Sep(padding=10, foreground=colors["color4"], background=colors["color4"]),
-                widget.TextBox("󰃰 ", foreground=colors["light"], background=colors["color4"]),
+                *outlined_left_arrow(COLORS["c1"], COLORS["d"]),
+                widget.Systray(padding=10, background=COLORS["c1"]),
+                widget.Sep(padding=10, foreground=COLORS["c1"], background=COLORS["c1"]),
+                *outlined_left_arrow(COLORS["c2"], COLORS["c1"]),
+                widget.Sep(padding=10, foreground=COLORS["c2"], background=COLORS["c2"]),
+                widget.TextBox("󱚻 ", foreground=COLORS["l"], background=COLORS["c2"]),
+                widget.Net(background=COLORS["c2"], interface='wlo1'),
+                widget.Sep(padding=10, foreground=COLORS["c2"], background=COLORS["c2"]),
+                *outlined_left_arrow(COLORS["c3"], COLORS["c2"]),
+                widget.Sep(padding=10, foreground=COLORS["c3"], background=COLORS["c3"]),
+                # widget.CurrentLayoutIcon(foreground=COLORS["l"], background=COLORS["c3"]),
+                widget.CurrentLayout(foreground=COLORS["l"], background=COLORS["c3"]),
+                widget.Sep(padding=10, foreground=COLORS["c3"], background=COLORS["c3"]),
+                widget.TextBox(" ", foreground=COLORS["l"], background=COLORS["c3"]),
+                widget.KeyboardLayout(font="UbuntuMono Nerd Font Bold", configured_keyboards=['us', 'latam'], foreground=COLORS["l"], background=COLORS["c3"]),
+                widget.Sep(padding=10, foreground=COLORS["c3"], background=COLORS["c3"]),
+                *outlined_left_arrow(COLORS["c4"], COLORS["c3"]),
+                widget.Sep(padding=10, foreground=COLORS["c4"], background=COLORS["c4"]),
+                widget.TextBox("󰃰 ", foreground=COLORS["l"], background=COLORS["c4"]),
                 widget.Clock(
                     font="UbuntuMono Nerd Font Bold",
-                    foreground=colors["light"],
-                    background=colors["color4"],
+                    foreground=COLORS["l"],
+                    background=COLORS["c4"],
                     format="%Y-%m-%d %a %H:%M"),
-                widget.Sep(padding=10, foreground=colors["color4"], background=colors["color4"]),
+                widget.Sep(padding=10, foreground=COLORS["c4"], background=COLORS["c4"]),
             ],
-            24,
+            30,
             opacity=0.95,
+            margin=[10, 15, 0, 15],
         ),
-        wallpaper="/home/bubbles/Pictures/bg/1338905.jpeg",
-        wallpaper_mode="fill",
+        wallpaper=WALLPAPER_ROUTE,
+        wallpaper_mode="fill"
     ),
     Screen(
         top=bar.Bar(
             [
                 widget.GroupBox(
-                    foreground=colors["light"],
-                    background=colors["dark"],
-                    font="UbuntuMono Nerd Font",
+                    foreground=COLORS["l"],
+                    background=COLORS["d"],
+                    font=DEFAULT_FONT,
                     fontsize=19,
                     margin_y=3,
                     margin_x=5,
                     padding_y=8,
                     padding_x=5,
                     borderWidth=1,
-                    active=colors["light"],
-                    inactive=colors["color4"],
+                    active=COLORS["l"],
+                    inactive=COLORS["c4"],
                     rounded=False,
                     highlight_method="block",
-                    this_current_screen_border=colors["color2"],
-                    this_screen_border=colors["color1"],
-                    other_current_screen_border=colors["dark"],
-                    other_screen_border=colors["dark"],
+                    this_current_screen_border=COLORS["c2"],
+                    this_screen_border=COLORS["c1"],
+                    other_current_screen_border=COLORS["d"],
+                    other_screen_border=COLORS["d"],
                 ),
                 widget.WindowName(
-                    foreground=colors["color2"],
-                    background=colors["dark"],
+                    foreground=COLORS["c2"],
+                    background=COLORS["d"],
                     fontsize=13,
                     font="UbuntuMono Nerd Font Bold",
                 ),
-                widget.TextBox("◀", fontsize=32, padding=-4, foreground=colors["color3"], background=colors["dark"]),
-                widget.Sep(padding=10, foreground=colors["color3"], background=colors["color3"]),
-                # widget.CurrentLayoutIcon(foreground=colors["light"], background=colors["color3"]),
-                widget.CurrentLayout(foreground=colors["light"], background=colors["color3"]),
-                widget.Sep(padding=10, foreground=colors["color3"], background=colors["color3"]),
-                widget.TextBox(" ", foreground=colors["light"], background=colors["color3"]),
-                widget.KeyboardLayout(font="UbuntuMono Nerd Font Bold", configured_keyboards=['us', 'latam'], foreground=colors["light"], background=colors["color3"]),
-                widget.Sep(padding=10, foreground=colors["color3"], background=colors["color3"]),
-                widget.TextBox("◀", fontsize=32, padding=-4, foreground=colors["color4"], background=colors["color3"]),
-                widget.Sep(padding=10, foreground=colors["color4"], background=colors["color4"]),
-                widget.TextBox("󰃰 ", foreground=colors["light"], background=colors["color4"]),
+                widget.TextBox("◀", fontsize=32, padding=-4, foreground=COLORS["c3"], background=COLORS["d"]),
+                widget.Sep(padding=10, foreground=COLORS["c3"], background=COLORS["c3"]),
+                # widget.CurrentLayoutIcon(foreground=COLORS["l"], background=COLORS["c3"]),
+                widget.CurrentLayout(foreground=COLORS["l"], background=COLORS["c3"]),
+                widget.Sep(padding=10, foreground=COLORS["c3"], background=COLORS["c3"]),
+                widget.TextBox(" ", foreground=COLORS["l"], background=COLORS["c3"]),
+                widget.KeyboardLayout(font="UbuntuMono Nerd Font Bold", configured_keyboards=['us', 'latam'], foreground=COLORS["l"], background=COLORS["c3"]),
+                widget.Sep(padding=10, foreground=COLORS["c3"], background=COLORS["c3"]),
+                widget.TextBox("◀", fontsize=32, padding=-4, foreground=COLORS["c4"], background=COLORS["c3"]),
+                widget.Sep(padding=10, foreground=COLORS["c4"], background=COLORS["c4"]),
+                widget.TextBox("󰃰 ", foreground=COLORS["l"], background=COLORS["c4"]),
                 widget.Clock(
                     font="UbuntuMono Nerd Font Bold",
-                    foreground=colors["light"],
-                    background=colors["color4"],
+                    foreground=COLORS["l"],
+                    background=COLORS["c4"],
                     format="%Y-%m-%d %a %H:%M"),
-                widget.Sep(padding=10, foreground=colors["color4"], background=colors["color4"]),
+                widget.Sep(padding=10, foreground=COLORS["c4"], background=COLORS["c4"]),
             ],
             24,
             opacity=0.95,
         ),
-        wallpaper="/home/bubbles/Pictures/bg/1338905.jpeg",
+        wallpaper=WALLPAPER_ROUTE,
         wallpaper_mode="fill",
     ),
 ]

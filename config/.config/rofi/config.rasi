@@ -1,7 +1,7 @@
 //@theme "/usr/share/rofi/themes/purple.rasi"
 
 configuration {
-	modi: "window,run,ssh,combi,drun";
+	modi: "window,run,ssh,combi,drun,apps:~/.config/rofi/nerdfont-launcher.py";
 	width: 50;
 	lines: 15;
 	columns: 1;

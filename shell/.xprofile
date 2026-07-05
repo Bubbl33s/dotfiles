@@ -1,4 +1,4 @@
-picom &
+picom -b &
 volumeicon &
 udiskie -t &
 nm-applet &

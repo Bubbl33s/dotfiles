@@ -166,6 +166,11 @@ alias grep='grep --color=auto'
 # Iniciar Oh My Posh
 eval "$(oh-my-posh init bash --config /usr/share/oh-my-posh/themes/velvet.omp.json)"
 shopt -s nocaseglob
+bind 'set completion-ignore-case on'
+bind 'set show-all-if-ambiguous on'
+# Buscar en historial escribiendo el inicio del comando (flecha arriba/abajo)
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
 # No guardar comandos duplicados ni los que empiezan con espacio
 export HISTCONTROL=ignoreboth
 # Historial gigante para no perder nada
@@ -191,3 +196,9 @@ export PATH="$HOME/.local/bin:$PATH"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+
+# BEGIN claude-audio-hook
+alias claude-music-on="touch ~/.claude/.audio-hook-enabled && echo '🎵 Audio hook ON'"
+alias claude-music-off="rm -f ~/.claude/.audio-hook-enabled && echo '🔇 Audio hook OFF'"
+alias claude-music-status="[ -f ~/.claude/.audio-hook-enabled ] && echo '🎵 ON' || echo '🔇 OFF'"
+# END claude-audio-hook
