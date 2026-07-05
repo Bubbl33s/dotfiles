@@ -1,0 +1,17 @@
+{
+    "runtime.version": "LuaJIT",
+    "diagnostics.globals": [
+        "screen",
+        "client",
+        "tag",
+        "awesome",
+        "root",
+        "mouse",
+        "key",
+        "button",
+        "keygrabber"
+    ],
+    "workspace.library": [
+        "/usr/share/awesome/lib"
+    ]
+}

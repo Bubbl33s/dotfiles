@@ -1,0 +1,84 @@
+# Nerd Font icon map -- shared source of truth for both rofi
+# (nerdfont-launcher.py) and Awesome (theme/icons.lua).
+#
+# Format: key|glyph[|class_override]
+#   key            lowercase text matched as a substring against the app's
+#                  rofi .desktop Name AND the window's WM_CLASS (both sides
+#                  normalized: lowercased, spaces/hyphens/dots stripped).
+#   glyph          paste the Nerd Font glyph here. Leave empty for now.
+#   class_override only needed when the running window's WM_CLASS shares no
+#                  substring with `key` (e.g. Blueman-manager vs "Bluetooth
+#                  Manager"). Optional, third column.
+#
+# Matching tries the LONGEST key first, so specific entries (e.g.
+# "datagrip") always win over generic ones (e.g. "toolbox") -- you don't
+# need to worry about line order when adding new apps.
+#
+# KNOWN LIMITATIONS:
+# - All LibreOffice modules (Writer/Calc/Draw/Impress/Math/Base) share the
+#   same WM_CLASS "soffice". Awesome's tasklist can only show ONE icon for
+#   any LibreOffice window regardless of module; rofi shows them correctly.
+# - ranger and htop run with Terminal=true: in Awesome their WM_CLASS is
+#   whatever terminal launched them (Alacritty), not their own.
+
+firefox|
+alacritty|
+code|󰨞
+chrome|
+brave|󰖟
+steam|
+datagrip|
+drawio|󰇟
+ranger|
+docker|
+postman|
+anydesk|
+bluetooth manager|󰂯|blueman
+cmake|
+electron|󱀤
+godot|
+gparted|
+lstopo|
+htop|
+toolbox|
+libreoffice writer|
+libreoffice calc|
+libreoffice draw|
+libreoffice impress|
+libreoffice math|
+libreoffice base|
+libreoffice|
+lshw|
+neovim|
+openjdk|
+pixelorama|󰽉
+polychromatic|
+v4l2|󰹑
+redshift|
+slack|
+spotify|
+telegram|
+terminator|
+thunar|󰉓
+uxterm|
+via|
+vlc|󰕼
+volume control|󱄠|pavucontrol
+xterm|
+zoom|
+about xfce|
+advanced network configuration|󱫋
+arandr|
+avahi|
+bluetooth adapters|󰂯
+bulk rename|󱧶
+look and feel|󰡬
+engrampa|
+flameshot|󰈸
+geometry dash|
+greeter settings|󰍂
+rofi|󰍜
+uiflow|
+vim|
+volume icon|󱄠
+default|
