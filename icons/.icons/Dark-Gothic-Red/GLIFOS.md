@@ -49,6 +49,41 @@ hereda PlaneDark solo cambia lo que se overridea).
 | `text-html.svg` | HTML | |
 | `font-x-generic.svg` | Fuentes | |
 
+## scalable/mimetypes/ — documentos y ofimática
+
+Thunar resuelve por tipo MIME con una lista de candidatos en orden: primero
+el nombre exacto del MIME, después el genérico de familia. Como este tema se
+consulta ANTES que PlaneDark con la lista completa, basta el genérico para
+cubrir toda la familia; el exacto solo hace falta si se quiere distinguir un
+formato puntual.
+
+| Archivo a crear | Cubre | Glifo |
+|---|---|---|
+| `x-office-document.svg` | docx, doc, odt, rtf (y fallback de epub/md) | |
+| `x-office-spreadsheet.svg` | xlsx, xls, ods | |
+| `x-office-presentation.svg` | pptx, odp | |
+| `text-markdown.svg` | md (opcional, si no cae en x-office-document) | |
+| `application-epub+zip.svg` | epub (opcional, ídem) | |
+| `text-csv.svg` | csv (opcional; su fallback es text-x-generic) | |
+
+## ¿Cómo descubrir el nombre para cualquier otro tipo?
+
+Con un archivo real (no vacío) del tipo en cuestión:
+
+```bash
+gio info -a standard::icon archivo.ext
+```
+
+Imprime la lista de candidatos en orden de prioridad; crea el SVG con
+cualquiera de esos nombres (el genérico cubre la familia completa, el exacto
+solo ese formato). Si el archivo está vacío usa:
+
+```bash
+python3 -c "from gi.repository import Gio; \
+ct,_ = Gio.content_type_guess('archivo.ext', None); \
+print(ct, Gio.content_type_get_icon(ct).get_names())"
+```
+
 ## scalable/emblems/ — insignias superpuestas
 
 | Archivo a crear | Qué es | Glifo |
