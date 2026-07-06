@@ -31,8 +31,8 @@ end
 
 -- Factory: builds the left zone content for screen `s`.
 function M.build_left(s)
-    local lead_arrow = arrows.outlined_right_arrow(colors.d, colors.c4)
-    local tail_arrow = arrows.outlined_left_arrow(colors.d, colors.c4)
+    local lead_arrow = arrows.outlined_arrow("right", colors.d, colors.c4)
+    local tail_arrow = arrows.outlined_arrow("left", colors.d, colors.c4)
 
     local arch_glyph = wibox.widget {
         {

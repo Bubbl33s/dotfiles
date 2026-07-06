@@ -12,7 +12,6 @@ icons.arrow_hard_right = ""
 icons.arrow_soft_right = ""
 icons.arrow_hard_left  = ""
 icons.arrow_soft_left  = ""
-icons.arrow_left_flame = ""
 
 -- Tags
 icons.tag = "󰫤"
@@ -21,66 +20,68 @@ icons.tag = "󰫤"
 icons.arch = "󰣇 "
 
 -- Wifi signal tiers (0 = weakest signal .. 4 = strongest)
-icons.wifi_0 = "󰤯 "
-icons.wifi_1 = "󰤟 "
-icons.wifi_2 = "󰤢 "
-icons.wifi_3 = "󰤥 "
-icons.wifi_4 = "󰤨 "
+icons.wifi_0 = "󰤯"
+icons.wifi_1 = "󰤟"
+icons.wifi_2 = "󰤢"
+icons.wifi_3 = "󰤥"
+icons.wifi_4 = "󰤨"
 
 -- Same tiers, wifi associated but internet check failed (mdi has a
 -- dedicated wifi-strength-N-alert glyph per level for exactly this)
-icons.wifi_0_no_internet = "󰤫 "
-icons.wifi_1_no_internet = "󰤠 "
-icons.wifi_2_no_internet = "󰤣 "
-icons.wifi_3_no_internet = "󰤦 "
-icons.wifi_4_no_internet = "󰤩 "
-icons.wired        = " "
-icons.disconnected = "󰤮 "
-icons.wifi_no_internet = "󰤟 "
-icons.wired_no_internet = "󰈂 "
+icons.wifi_0_no_internet = "󰤫"
+icons.wifi_1_no_internet = "󰤠"
+icons.wifi_2_no_internet = "󰤣"
+icons.wifi_3_no_internet = "󰤦"
+icons.wifi_4_no_internet = "󰤩"
+icons.wired        = ""
+icons.disconnected = "󰤮"
+icons.wifi_no_internet = "󰤮"
+icons.wired_no_internet = "󰈂"
 
 -- Bluetooth tiers (widgets/bluetooth.lua): adapter off, adapter on but
 -- nothing paired/connected, and a device actually connected
-icons.bluetooth_off       = ""
-icons.bluetooth_on        = ""
-icons.bluetooth_connected = ""
+icons.bluetooth_off       = "󰂲"
+icons.bluetooth_on        = "󰂯"
+icons.bluetooth_connected = "󰂱"
 
--- Volume tiers
-icons.volume_low  = "󰕿 "
-icons.volume_mid  = "󰖀 "
-icons.volume_high = "󰕾 "
-icons.mute         = "󰝟 "
+-- Volume: up/down are plain Unicode triangles (not a Nerd Font PUA
+-- codepoint) -- guaranteed to render in any font, no glyph-guessing risk,
+-- used as the raise/lower click targets in widgets/volume.lua (which now
+-- shows level via level_bar_vertical instead of a tiered speaker icon).
+icons.volume_up   = "󰝝"
+icons.volume_down = "󰝞"
+icons.mute        = "󰝟"
 
 -- Battery tiers, one per multiple of 10, plain and charging variants
-icons.battery_10  = "󰁺 "
-icons.battery_20  = "󰁻 "
-icons.battery_30  = "󰁼 "
-icons.battery_40  = "󰁽 "
-icons.battery_50  = "󰁾 "
-icons.battery_60  = "󰁿 "
-icons.battery_70  = "󰂀 "
-icons.battery_80  = "󰂁 "
-icons.battery_90  = "󰂂 "
-icons.battery_100 = "󰁹 "
+icons.battery_10  = "󰁺"
+icons.battery_20  = "󰁻"
+icons.battery_30  = "󰁼"
+icons.battery_40  = "󰁽"
+icons.battery_50  = "󰁾"
+icons.battery_60  = "󰁿"
+icons.battery_70  = "󰂀"
+icons.battery_80  = "󰂁"
+icons.battery_90  = "󰂂"
+icons.battery_100 = "󰁹"
 
-icons.battery_10_charging  = "󰢜 "
-icons.battery_20_charging  = "󰂆 "
-icons.battery_30_charging  = "󰂇 "
-icons.battery_40_charging  = "󰂈 "
-icons.battery_50_charging  = "󰢝 "
-icons.battery_60_charging  = "󰂉 "
-icons.battery_70_charging  = "󰢞 "
-icons.battery_80_charging  = "󰂊 "
-icons.battery_90_charging  = "󰂋 "
-icons.battery_100_charging = "󰂅 "
+icons.battery_10_charging  = "󰢜"
+icons.battery_20_charging  = "󰂆"
+icons.battery_30_charging  = "󰂇"
+icons.battery_40_charging  = "󰂈"
+icons.battery_50_charging  = "󰢝"
+icons.battery_60_charging  = "󰂉"
+icons.battery_70_charging  = "󰢞"
+icons.battery_80_charging  = "󰂊"
+icons.battery_90_charging  = "󰂋"
+icons.battery_100_charging = "󰂅"
 
 -- Extra: discharging and under 10% (more urgent than the battery_10
 -- tier -- not connected to a charger at all)
-icons.battery_critical = "󰂃 "
+icons.battery_critical = "󰂃"
 
 -- Extra: plugged in, at 100%, done charging (distinct from
 -- battery_100_charging, which is 100% while still actively charging)
-icons.battery_full_charged = "󱈏 "
+icons.battery_full_charged = "󱈏"
 
 -- Keyboard / calendar
 icons.keyboard = " "

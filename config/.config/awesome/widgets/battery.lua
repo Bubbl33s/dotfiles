@@ -12,6 +12,15 @@ local icons = require("theme.icons")
 
 local M = {}
 
+-- The charging glyph (bolt overlay) doesn't sit centered on its own advance
+-- width the same way the plain battery glyph does -- keyed by charging
+-- state since it's the SAME widget instance switching glyphs at runtime.
+-- Space COUNT (not px), same as widgets/network.lua's opts.pad_left/right --
+-- padding the string is the version of this nudge that doesn't corrupt the
+-- glyph's render (wrapping the widget in wibox.container.margin did).
+local PAD_CHARGING     = { left = 0, right = 0 }
+local PAD_NOT_CHARGING = { left = 0, right = 0 }
+
 local function find_battery_path()
     for i = 0, 3 do
         local path = "/sys/class/power_supply/BAT" .. i
@@ -88,8 +97,14 @@ function M.new()
             return
         end
 
-        battery_icon.text = battery_tier_icon(capacity, status)
-        battery_pct.text = capacity .. "%"
+        local pad = (status == "Charging") and PAD_CHARGING or PAD_NOT_CHARGING
+        battery_icon.text = string.rep(" ", pad.left) .. battery_tier_icon(capacity, status) .. string.rep(" ", pad.right)
+        -- No "%" (redundant in a bar this narrow) and a smaller font at
+        -- 100 (3 digits) -- at the normal size "100" doesn't fit the
+        -- vertical bar's width and wraps onto a second line.
+        local pct_text = tostring(capacity)
+        battery_pct.text = pct_text
+        battery_pct.font = (#pct_text == 3) and (beautiful.font_family .. " 9") or beautiful.font
     end
 
     gears.timer {

@@ -22,49 +22,84 @@ local function read_command(cmd, cb)
     end)
 end
 
-local function volume_tier_icon(volume)
-    if volume >= 66 then
-        return icons.volume_high
-    elseif volume >= 33 then
-        return icons.volume_mid
-    end
-    return icons.volume_low
-end
-
--- Constructs the volume widget: icon, a vertical level bar, and a
--- percentage label, stacked -- this widget only ever lives in the vertical
--- side bar now. Scroll up/down changes volume, click toggles mute -- same
--- `pamixer` flags/step already bound to the media keys (keys/global.lua),
--- kept here as ADJUST_STEP so both stay in sync if you tune it.
+-- Constructs the volume widget: raise icon, a vertical level bar, lower
+-- icon -- no percentage label, level is read off the bar itself. This
+-- widget only ever lives in the vertical side bar now. Click the up/down
+-- icons to raise/lower, click the bar to toggle mute; scroll anywhere in
+-- the pill also raises/lowers (each child needs its OWN button binding --
+-- clicks only hit the specific widget under the cursor, not its pill-mates
+-- or a parent, same as bars/vertical.lua's kb_icon/kb_short). `pamixer`
+-- flags/step already bound to the media keys (keys/global.lua), kept here
+-- as ADJUST_STEP so both stay in sync if you tune it.
 local ADJUST_STEP = 5
 
-function M.new()
-    local volume_icon = wibox.widget {
-        font   = beautiful.font,
-        align  = "center",
+local ICON_FONT = beautiful.font_family .. " 14"
+
+-- `opts.pad_left`/`opts.pad_right` (px, via dpi): nudges the glyph when
+-- its ink isn't centered on its own advance width, via wibox.container.
+-- margin.
+function M.new(opts)
+    opts = opts or {}
+
+    local vol_up_icon = wibox.widget {
+        text   = icons.volume_up,
+        font   = ICON_FONT,
+        align  = "left",
+        widget = wibox.widget.textbox,
+    }
+    local vol_down_icon = wibox.widget {
+        text   = icons.volume_down,
+        font   = ICON_FONT,
+        align  = "left",
         widget = wibox.widget.textbox,
     }
 
-    local level_bar = wibox.widget {
-        max_value     = 100,
-        value         = 0,
-        forced_width  = dpi(6),
-        forced_height = dpi(40),
-        color         = beautiful.icon_bg,
-        background_color = beautiful.palette.c5,
-        widget        = wibox.widget.progressbar,
+    local vol_up_wrapped = wibox.widget {
+        vol_up_icon,
+        left   = dpi(opts.pad_left or 0),
+        right  = dpi(opts.pad_right or 0),
+        widget = wibox.container.margin,
     }
-    -- progressbar always draws horizontally (its own `vertical` property is
-    -- a 4.0+ no-op) -- wibox.container.rotate is the documented way to turn
-    -- it into a vertical bar. If the fill looks like it grows from the
-    -- wrong end, swap "east" for "west" here.
-    local level_bar_vertical = wibox.container.rotate(level_bar, "east")
+    local vol_down_wrapped = wibox.widget {
+        vol_down_icon,
+        left   = dpi(opts.pad_left or 0),
+        right  = dpi(opts.pad_right or 0),
+        widget = wibox.container.margin,
+    }
 
-    local volume_pct = wibox.widget {
-        font   = beautiful.font,
-        align  = "center",
-        widget = wibox.widget.textbox,
+    -- Built by hand instead of wibox.widget.progressbar + wibox.container.
+    -- rotate: that combination kept coming out wrong-axis (rotate's width/
+    -- height swap plus the child's own forced size clamping is easy to get
+    -- backwards, and did, twice). This is a plain background rectangle
+    -- (level_bar_vertical, the empty/track color) containing a second one
+    -- (`fill`, white) whose forced_height is set directly in px by
+    -- set_level() below and bottom-anchored via wibox.container.place --
+    -- no rotation, no axis ambiguity, grows straight up from the bottom.
+    local BAR_WIDTH  = dpi(10)
+    local BAR_HEIGHT = dpi(40)
+
+    local fill = wibox.widget {
+        forced_width  = BAR_WIDTH,
+        forced_height = 0,
+        bg            = beautiful.palette.w,
+        widget        = wibox.container.background,
     }
+
+    local level_bar_vertical = wibox.widget {
+        {
+            fill,
+            valign = "bottom",
+            widget = wibox.container.place,
+        },
+        forced_width  = BAR_WIDTH,
+        forced_height = BAR_HEIGHT,
+        bg            = beautiful.palette.c5,
+        widget        = wibox.container.background,
+    }
+
+    local function set_level(pct)
+        fill.forced_height = math.floor(BAR_HEIGHT * (math.max(0, math.min(100, pct)) / 100))
+    end
 
     local function update()
         read_command({ "pamixer", "--get-mute" }, function(muted)
@@ -74,23 +109,21 @@ function M.new()
                         local volume = raw and tonumber(raw)
                         if not volume then
                             -- pamixer unavailable or no sink -- do not error
-                            volume_icon.text = icons.mute
-                            volume_pct.text = ""
-                            level_bar.value = 0
+                            set_level(0)
                             return
                         end
 
-                        level_bar.value = volume
-                        volume_pct.text = volume .. "%"
-                        volume_icon.text = (muted == "true") and icons.mute or volume_tier_icon(volume)
+                        -- Muted shows as an empty bar -- no separate label
+                        -- to switch to a mute glyph anymore.
+                        set_level((muted == "true") and 0 or volume)
                     end)
                     if not inner_ok then
-                        volume_icon.text = icons.mute
+                        set_level(0)
                     end
                 end)
             end)
             if not ok then
-                volume_icon.text = icons.mute
+                set_level(0)
             end
         end)
     end
@@ -102,20 +135,48 @@ function M.new()
         callback  = update,
     }
 
-    local volume_widget = wibox.widget {
-        layout = wibox.layout.fixed.vertical,
-        volume_icon,
-        level_bar_vertical,
-        volume_pct,
-    }
+    local function raise() awful.spawn({ "pamixer", "-i", tostring(ADJUST_STEP) }); update() end
+    local function lower() awful.spawn({ "pamixer", "-d", tostring(ADJUST_STEP) }); update() end
+    local function toggle_mute() awful.spawn({ "pamixer", "-t" }); update() end
 
-    volume_widget:buttons({
-        awful.button({}, 1, function() awful.spawn({ "pamixer", "-t" }); update() end),
-        awful.button({}, 4, function() awful.spawn({ "pamixer", "-i", tostring(ADJUST_STEP) }); update() end),
-        awful.button({}, 5, function() awful.spawn({ "pamixer", "-d", tostring(ADJUST_STEP) }); update() end),
+    vol_up_icon:buttons({
+        awful.button({}, 1, raise),
+        awful.button({}, 4, raise),
+        awful.button({}, 5, lower),
+    })
+    vol_down_icon:buttons({
+        awful.button({}, 1, lower),
+        awful.button({}, 4, raise),
+        awful.button({}, 5, lower),
+    })
+    level_bar_vertical:buttons({
+        awful.button({}, 1, toggle_mute),
+        awful.button({}, 4, raise),
+        awful.button({}, 5, lower),
     })
 
-    return volume_widget
+    -- wibox.layout.fixed.vertical hands each child the FULL cross-axis
+    -- width (the pill's width), not each child's own fit-preferred width --
+    -- container.background paints that entire handed-down box, so without
+    -- this wrap level_bar_vertical's forced_width (BAR_WIDTH) was ignored
+    -- at draw time and it rendered as a wide bar instead of a thin one
+    -- (the white `fill` inside stayed thin only because it already sat in
+    -- its own place container). wibox.container.place uses the child's fit
+    -- size instead of the available size, so this constrains the bar back
+    -- to BAR_WIDTH, centered.
+    local level_bar_centered = wibox.widget {
+        level_bar_vertical,
+        halign = "center",
+        widget = wibox.container.place,
+    }
+
+    return wibox.widget {
+        layout  = wibox.layout.fixed.vertical,
+        spacing = dpi(6),
+        vol_up_wrapped,
+        level_bar_centered,
+        vol_down_wrapped,
+    }
 end
 
 return M

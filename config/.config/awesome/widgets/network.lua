@@ -19,6 +19,7 @@ local gears = require("gears")
 local wibox = require("wibox")
 local beautiful = require("beautiful")
 local icons = require("theme.icons")
+local dpi = require("beautiful.xresources").apply_dpi
 
 local M = {}
 
@@ -108,18 +109,28 @@ end
 -- Constructs the connectivity widget: a wibox.widget.textbox updated in
 -- place by a gears.timer, matching the polling-timer pattern used by the
 -- previous net_text widget in rc.lua.
-function M.new()
+--
+-- `opts.pad_left`/`opts.pad_right` (px, via dpi): nudges the glyph via
+-- wibox.container.margin when its ink isn't centered on its own advance
+-- width, same reason as widgets/volume.lua.
+function M.new(opts)
+    opts = opts or {}
+
     local net_text = wibox.widget {
         font   = beautiful.font,
-        align  = "center",
+        align  = "left",
         widget = wibox.widget.textbox,
     }
+
+    local function set_icon(text)
+        net_text.text = text
+    end
 
     local function update()
         get_active_interface(function(iface)
             local ok = pcall(function()
                 if not iface then
-                    net_text.text = icons.disconnected
+                    set_icon(icons.disconnected)
                     return
                 end
 
@@ -128,27 +139,27 @@ function M.new()
                 has_internet(function(online)
                     local inner_ok = pcall(function()
                         if wired then
-                            net_text.text = online and icons.wired or icons.wired_no_internet
+                            set_icon(online and icons.wired or icons.wired_no_internet)
                             return
                         end
 
                         get_wifi_signal(function(signal)
                             local sig_ok = pcall(function()
-                                net_text.text = signal and signal_tier_icon(signal, online)
-                                    or (online and icons.disconnected or icons.wifi_no_internet)
+                                set_icon(signal and signal_tier_icon(signal, online)
+                                    or (online and icons.disconnected or icons.wifi_no_internet))
                             end)
                             if not sig_ok then
-                                net_text.text = icons.disconnected
+                                set_icon(icons.disconnected)
                             end
                         end)
                     end)
                     if not inner_ok then
-                        net_text.text = icons.disconnected
+                        set_icon(icons.disconnected)
                     end
                 end)
             end)
             if not ok then
-                net_text.text = icons.disconnected
+                set_icon(icons.disconnected)
             end
         end)
     end
@@ -160,7 +171,12 @@ function M.new()
         callback  = update,
     }
 
-    return net_text
+    return wibox.widget {
+        net_text,
+        left   = dpi(opts.pad_left or 0),
+        right  = dpi(opts.pad_right or 0),
+        widget = wibox.container.margin,
+    }
 end
 
 return M

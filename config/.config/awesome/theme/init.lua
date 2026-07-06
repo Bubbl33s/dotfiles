@@ -37,6 +37,16 @@ theme.font_bold     = "UbuntuMono Nerd Font Bold 10"
 theme.font_family      = "UbuntuMono Nerd Font"
 theme.font_family_bold = "UbuntuMono Nerd Font Bold"
 
+-- Font for the two "corner" arrows that connect the horizontal and vertical
+-- bars (bars/right.lua's head_arrow, bars/vertical.lua's lead_arrow) --
+-- one shared value so both corners render at the same size. Smaller than
+-- theme.arrows.lua's own DEFAULT_FONT (24pt): the divider glyph's triangle
+-- never covers 100% of its cell, so the leftover sliver paints in the
+-- tile's own `bg` -- against a differently-colored neighbor (the power
+-- pill) that shows as a small wedge of color. Shrinking the glyph shrinks
+-- that wedge proportionally. Tune this one number to make it bigger/smaller.
+theme.corner_arrow_font = theme.font_family .. " 24"
+
 theme.bg_normal     = colors.d
 theme.bg_focus      = colors.c2
 theme.bg_urgent     = colors.c5
@@ -82,8 +92,9 @@ theme.wallpaper = "/home/bubbles/Pictures/bg/1329229.png"
 theme.bar_radius    = dpi(6)
 theme.client_radius = dpi(8)
 
--- Pill backgrounds behind the right bar's grouped widgets (bar_pill() in
--- bars/right.lua). One color per group, all independently editable --
+-- Pill backgrounds behind the bars' grouped widgets (theme/segment.lua's
+-- pill(), used by both bars/right.lua and bars/vertical.lua). One color
+-- per group, all independently editable --
 -- change any single one, or set them all to the same colors.cN for a
 -- uniform look. icon_bg covers wifi+volume together as one shared pill
 -- (that group IS meant to share a background); battery and power are each
@@ -95,7 +106,6 @@ theme.layoutname_bg  = colors.c4 -- "tile"/"floating" layout name pill
 theme.kblayout_bg    = colors.c4 -- keyboard layout ("latam"/"us") pill
 theme.date_bg        = colors.c4 -- calendar + date pill
 theme.time_bg        = colors.c4 -- clock + time pill
-theme.icon_bg_radius = dpi(6)    -- shared radius for all pills above
 
 -- The wibar's own geometry (bars/init.lua's awful.wibar height + margins).
 -- Named here, instead of inline literals in bars/init.lua, so anything
@@ -105,6 +115,17 @@ theme.icon_bg_radius = dpi(6)    -- shared radius for all pills above
 theme.wibar_height      = dpi(30)
 theme.wibar_margin_top  = dpi(10)
 theme.wibar_margin_side = dpi(15)
+
+-- The vertical bar (bars/vertical.lua) shares the same top-right corner as
+-- the horizontal one. Deliberately UNDER-clears the horizontal bar's own
+-- bottom edge (wibar_margin_top + wibar_height) by wibar_margin_top --
+-- i.e. it starts right where the horizontal bar's un-inset box would end,
+-- overlapping the horizontal bar's own top-margin gap by that much. That
+-- overlap is intentional: bars/init.lua sets the horizontal bar `ontop`,
+-- so it draws over that sliver instead of leaving a visible seam/gap
+-- between the two -- they read as one connected corner, not two floating
+-- pieces.
+theme.wibar_vertical_margin_top = theme.wibar_height
 
 -- awful.menu reads these `menu_*` fields automatically from the active
 -- beautiful theme, so any awful.menu built anywhere (e.g. widgets/power.lua)

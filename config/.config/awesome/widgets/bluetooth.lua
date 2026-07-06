@@ -10,6 +10,7 @@ local gears = require("gears")
 local wibox = require("wibox")
 local beautiful = require("beautiful")
 local icons = require("theme.icons")
+local dpi = require("beautiful.xresources").apply_dpi
 
 local M = {}
 
@@ -32,34 +33,45 @@ local function get_connected(cb)
     end)
 end
 
+local ICON_FONT = beautiful.font_family .. " 14"
+
 -- Constructs the bluetooth widget: a wibox.widget.textbox updated in place
 -- by a gears.timer.
-function M.new()
+--
+-- `opts.pad_left`/`opts.pad_right` (px, via dpi): see the matching note in
+-- widgets/network.lua.
+function M.new(opts)
+    opts = opts or {}
+
     local bt_text = wibox.widget {
-        font   = beautiful.font,
-        align  = "center",
+        font   = ICON_FONT,
+        align  = "left",
         widget = wibox.widget.textbox,
     }
+
+    local function set_icon(text)
+        bt_text.text = text
+    end
 
     local function update()
         get_powered(function(powered)
             local ok = pcall(function()
                 if not powered then
-                    bt_text.text = icons.bluetooth_off
+                    set_icon(icons.bluetooth_off)
                     return
                 end
 
                 get_connected(function(connected)
                     local inner_ok = pcall(function()
-                        bt_text.text = connected and icons.bluetooth_connected or icons.bluetooth_on
+                        set_icon(connected and icons.bluetooth_connected or icons.bluetooth_on)
                     end)
                     if not inner_ok then
-                        bt_text.text = icons.bluetooth_off
+                        set_icon(icons.bluetooth_off)
                     end
                 end)
             end)
             if not ok then
-                bt_text.text = icons.bluetooth_off
+                set_icon(icons.bluetooth_off)
             end
         end)
     end
@@ -71,7 +83,12 @@ function M.new()
         callback  = update,
     }
 
-    return bt_text
+    return wibox.widget {
+        bt_text,
+        left   = dpi(opts.pad_left or 0),
+        right  = dpi(opts.pad_right or 0),
+        widget = wibox.container.margin,
+    }
 end
 
 return M
