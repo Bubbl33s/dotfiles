@@ -16,6 +16,7 @@ local awful = require("awful")
 local gears = require("gears")
 local wibox = require("wibox")
 local beautiful = require("beautiful")
+local dpi = require("beautiful.xresources").apply_dpi
 
 local left_bar     = require("bars.left")
 local right_bar    = require("bars.right")
@@ -83,7 +84,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
         screen   = s,
         height   = beautiful.wibar_height,
         bg       = colors.d .. "f2",
-        shape    = function(cr, w, h) gears.shape.rounded_rect(cr, w, h, beautiful.bar_radius) end,
+        shape    = function(cr, w, h) gears.shape.partially_rounded_rect(cr, w, h, true, true, false, true, beautiful.bar_radius) end,
         margins  = is_primary and {
             top   = beautiful.wibar_margin_top,
             left  = beautiful.wibar_margin_side,
@@ -116,7 +117,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
         -- wibar_margin_top short of it, same as the horizontal bar does.
         s.myverticalwibox:geometry({
             y      = s.geometry.y + beautiful.wibar_vertical_margin_top,
-            height = s.geometry.height - beautiful.wibar_vertical_margin_top - beautiful.wibar_margin_top,
+            height = s.geometry.height - beautiful.wibar_vertical_margin_top - beautiful.wibar_margin_top - dpi(10),
         })
     end
 end)

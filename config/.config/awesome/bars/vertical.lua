@@ -29,7 +29,7 @@ local GAPS = {
     -- Vertical wibar's top edge -> lead_arrow. 0 to match bars/right.lua's
     -- head_arrow -> power pill, which also touches directly (gap = 0
     -- there too).
-    edge_to_arrow  = dpi(4),
+    edge_to_arrow  = dpi(0),
     -- lead_arrow -> first icon pill. 0 to actually touch, same as
     -- edge_to_arrow's intent -- this is the one that was still showing a
     -- visible gap before: it, not edge_to_arrow, is what sits between the
@@ -153,7 +153,7 @@ function M.build_vertical(s, is_primary) -- luacheck: no unused
     local rest = wibox.widget {
         items,
         top    = GAPS.arrow_to_first,
-        bottom = GAPS.bottom_margin,
+        bottom = GAPS.bottom_margin + dpi(10),
         widget = wibox.container.margin,
     }
 
