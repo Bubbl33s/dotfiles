@@ -1,0 +1,3 @@
+/* Dark Gothic Red — user GTK3 CSS (loader). Every import must be
+   strictly scoped: ALL GTK3 apps load this file. */
+@import url("dark-gothic-red-thunar.css");

@@ -1,0 +1,214 @@
+/* Dark Gothic Red — Thunar-only GTK3 theme.
+ * Layered on top of Yaru-Pink-dark via ~/.config/gtk-3.0/gtk.css (USER
+ * priority, wins over theme and Thunar's internal provider).
+ *
+ * Every rule MUST be scoped with `.thunar` — this file is loaded by every
+ * GTK3 app, and an unscoped selector leaks globally. Context menus,
+ * tooltips and dialogs are separate toplevels without the `.thunar` class,
+ * so they keep the base GTK theme (accepted limitation).
+ *
+ * Palette: dotfiles/THEME.md (source of truth: awesome/theme/init.lua).
+ */
+
+/* Palette — THEME.md key names, dgr_ namespace (never redefine @theme_*) */
+@define-color dgr_w   #ffffff;
+@define-color dgr_b   #000000;
+@define-color dgr_l   #f2eaea;
+@define-color dgr_d   #050001;
+@define-color dgr_t   #cf91b5;
+@define-color dgr_c_2 #b70803;
+@define-color dgr_c_1 #e81509;
+@define-color dgr_c1  #7a1f20;
+@define-color dgr_c2  #5c1717;
+@define-color dgr_c3  #3f0f10;
+@define-color dgr_c4  #300c0d;
+@define-color dgr_c5  #20080a;
+
+/* Window root */
+window.thunar {
+    background-color: @dgr_d;
+    color: @dgr_l;
+    font-family: "UbuntuMono Nerd Font";
+    font-size: 12pt;
+}
+
+/* View area — detailed, compact and icon views */
+.thunar .standard-view,
+.thunar .standard-view .view {
+    background-color: @dgr_d;
+    color: @dgr_l;
+}
+
+.thunar .view:selected,
+.thunar .view:selected:focus {
+    background-color: @dgr_c2;
+    color: @dgr_l;
+}
+
+.thunar .view:selected:backdrop {
+    background-color: @dgr_c3;
+    color: @dgr_l;
+}
+
+.thunar .view:hover {
+    background-color: @dgr_c5;
+}
+
+/* Detailed-list column headers */
+.thunar treeview.view header button {
+    background-image: none;
+    background-color: @dgr_c4;
+    color: @dgr_t;
+    border-color: @dgr_c5;
+}
+
+/* Sidebar (shortcuts pane) */
+.thunar .sidebar,
+.thunar .shortcuts-pane {
+    background-color: @dgr_c5;
+    color: @dgr_l;
+    border-color: @dgr_c5;
+}
+
+.thunar .sidebar .view {
+    background-color: @dgr_c5;
+    color: @dgr_l;
+}
+
+.thunar .sidebar .view:selected {
+    background-color: @dgr_c2;
+    color: @dgr_l;
+}
+
+.thunar .sidebar .view:selected:backdrop,
+.thunar .sidebar .view:hover {
+    background-color: @dgr_c3;
+    color: @dgr_l;
+}
+
+/* Toolbar */
+.thunar toolbar {
+    background-color: @dgr_c4;
+    color: @dgr_l;
+}
+
+.thunar toolbar button {
+    background-image: none;
+    background-color: transparent;
+    border-radius: 6px;
+}
+
+.thunar toolbar button:hover {
+    background-color: @dgr_c3;
+}
+
+.thunar toolbar button:active,
+.thunar toolbar button:checked {
+    background-color: @dgr_c2;
+}
+
+.thunar toolbar button:disabled {
+    color: alpha(@dgr_l, 0.35);
+}
+
+/* Pathbar */
+.thunar .path-bar button,
+.thunar .location-button {
+    background-image: none;
+    background-color: @dgr_c4;
+    color: @dgr_t;
+    border-radius: 6px;
+}
+
+.thunar .path-bar button:hover,
+.thunar .location-button:hover {
+    background-color: @dgr_c3;
+    color: @dgr_l;
+}
+
+.thunar .path-bar button:checked,
+.thunar .location-button:checked {
+    background-color: @dgr_c2;
+    color: @dgr_l;
+}
+
+/* Location entry (Ctrl+L) */
+.thunar toolbar entry {
+    background-color: @dgr_c5;
+    color: @dgr_l;
+    caret-color: @dgr_t;
+    border: 1px solid @dgr_c5;
+    border-radius: 6px;
+}
+
+.thunar toolbar entry:focus {
+    border-color: @dgr_c1;
+}
+
+.thunar toolbar entry selection {
+    background-color: @dgr_c2;
+    color: @dgr_l;
+}
+
+/* Statusbar */
+.thunar statusbar {
+    background-color: @dgr_c4;
+    color: @dgr_t;
+    border-top: 1px solid @dgr_c5;
+}
+
+/* Rubber-band selection — bright red = active state */
+.thunar rubberband,
+.thunar .rubberband {
+    background-color: alpha(@dgr_c_1, 0.20);
+    border: 1px solid @dgr_c_1;
+}
+
+/* Drag-and-drop target */
+.thunar .standard-view:drop(active) {
+    border-color: @dgr_c_1;
+}
+
+/* Scrollbars */
+.thunar scrollbar trough {
+    background-color: @dgr_d;
+}
+
+.thunar scrollbar slider {
+    background-color: @dgr_c2;
+    border-radius: 8px;
+    min-width: 8px;
+    min-height: 8px;
+}
+
+.thunar scrollbar slider:hover {
+    background-color: @dgr_c1;
+}
+
+.thunar scrollbar slider:active {
+    background-color: @dgr_c_2;
+}
+
+/* Tabs / split view */
+.thunar notebook > header {
+    background-color: @dgr_c4;
+}
+
+.thunar notebook tab {
+    color: @dgr_t;
+}
+
+.thunar notebook tab:checked {
+    background-color: @dgr_d;
+    color: @dgr_l;
+    box-shadow: inset 0 -2px @dgr_c1;
+}
+
+.thunar .split-view-inactive-pane .view {
+    background-color: @dgr_c5;
+}
+
+/* Separators */
+.thunar separator {
+    background-color: @dgr_c5;
+}
