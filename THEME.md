@@ -108,8 +108,12 @@ porque lxappearance lo reescribe y rompería el symlink):
 |                         | drop target, borde de entry con foco              |
 
 Limitaciones: menús contextuales, tooltips y diálogos son toplevels propios
-sin la clase `.thunar` → conservan Yaru-Pink-dark. Los íconos rosas vienen
-del icon theme (`PlaneDark`), no del CSS. Recargar con `thunar -q`.
+sin la clase `.thunar` → conservan Yaru-Pink-dark. Recargar con `thunar -q`.
+
+Los íconos NO son CSS: los resuelve el icon theme por nombre. Para eso existe
+`icons/.icons/Dark-Gothic-Red/` (activo en `settings.ini`, hereda PlaneDark):
+cada override es un SVG con un glifo Nerd Font adentro — ver
+`GLIFOS.md` (registro de nombres pendientes) y `template-glyph.svg` ahí mismo.
 
 En una máquina nueva donde `~/.config/gtk-3.0` no exista aún, usar
 `stow --no-folding config` (o pre-crear el dir) para que GTK no escriba

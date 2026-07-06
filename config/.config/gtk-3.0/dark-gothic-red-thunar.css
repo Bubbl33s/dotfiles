@@ -54,6 +54,14 @@ window.thunar {
     background-color: @dgr_c5;
 }
 
+/* Keyboard-focus indicator (outline around the current item) */
+.thunar .view,
+.thunar .view:focus,
+.thunar .view:selected {
+    outline-color: alpha(@dgr_c1, 0.9);
+    -gtk-outline-radius: 4px;
+}
+
 /* Detailed-list column headers */
 .thunar treeview.view header button {
     background-image: none;

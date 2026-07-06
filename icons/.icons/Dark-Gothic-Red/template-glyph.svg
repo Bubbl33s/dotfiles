@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Template: a Nerd Font glyph as an SVG icon.
+     1. Copy into scalable/places|mimetypes|emblems/ with the exact icon
+        name (e.g. scalable/places/folder.svg).
+     2. Replace the glyph inside <text> and pick a palette color for fill
+        (see THEME.md). Adjust font-size/y if the glyph sits off-center.
+     Note: librsvg renders <text> with installed fonts. If a glyph ever
+     renders as a box, convert text to path (e.g. with Inkscape). -->
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <text x="32" y="52" font-family="UbuntuMono Nerd Font" font-size="52"
+        text-anchor="middle" fill="#7a1f20">&#xf07b;</text>
+</svg>
