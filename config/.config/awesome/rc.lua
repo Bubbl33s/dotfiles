@@ -18,6 +18,10 @@ local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
+-- Dunst is the notification daemon: stub out naughty's D-Bus module so it
+-- never competes for org.freedesktop.Notifications (naughty stays available
+-- for awesome's own error popups below).
+package.loaded["naughty.dbus"] = {}
 local naughty = require("naughty")
 
 -- {{{ Error handling

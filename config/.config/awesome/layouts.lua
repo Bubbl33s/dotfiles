@@ -10,4 +10,5 @@ awful.layout.layouts = {
     awful.layout.suit.tile.bottom, -- master top,  stack bottom (~qtile MonadWide)
     awful.layout.suit.max,         -- fullscreen focus          (~qtile Max)
     awful.layout.suit.fair,        -- even grid for 3+ clients
+    awful.layout.suit.floating,    -- free-floating windows
 }

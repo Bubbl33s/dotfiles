@@ -60,11 +60,41 @@ awful.keyboard.append_global_keybindings({
 -- geometric direction (e.g. nothing "above" in a left/right split), so it
 -- silently no-ops. Fall back to byidx cycling when that happens, so h/j/k/l
 -- always land on the other visible client regardless of split orientation.
+local function client_on_tag(c, t)
+    if not t then return true end
+    for _, ct in ipairs(c:tags()) do
+        if ct == t then return true end
+    end
+    return false
+end
+
+-- Fullscreen games (Steam/Proton titles) commonly auto-minimize themselves
+-- (WM_STATE: Iconic) when they lose input focus. awful.client.focus.* builds
+-- its candidate list from screen.clients, which explicitly excludes
+-- minimized clients ("technically not on the screen"), so h/j/k/l and
+-- byidx silently skip them forever. Un-minimize the first minimized client
+-- on the current tag as a last-resort fallback instead.
+local function focus_minimized_on_tag()
+    local s = awful.screen.focused()
+    local t = s.selected_tag
+    for _, c in ipairs(s.hidden_clients) do
+        if c.minimized and client_on_tag(c, t) then
+            c.minimized = false
+            c:emit_signal("request::activate", "key.unminimize", {raise = true})
+            return true
+        end
+    end
+    return false
+end
+
 local function focus_direction(dir, fallback_idx)
     local c = client.focus
     awful.client.focus.global_bydirection(dir)
     if client.focus == c then
         awful.client.focus.byidx(fallback_idx)
+    end
+    if client.focus == c then
+        focus_minimized_on_tag()
     end
 end
 
@@ -77,7 +107,13 @@ awful.keyboard.append_global_keybindings({
               {description = "focus up", group = "client"}),
     awful.key({ MODKEY }, "k", function () focus_direction("down", 1) end,
               {description = "focus down", group = "client"}),
-    awful.key({ MODKEY, "Shift" }, "space", function () awful.client.focus.byidx(1) end,
+    awful.key({ MODKEY, "Shift" }, "space", function ()
+        local c = client.focus
+        awful.client.focus.byidx(1)
+        if client.focus == c then
+            focus_minimized_on_tag()
+        end
+    end,
               {description = "focus next window", group = "client"}),
 })
 

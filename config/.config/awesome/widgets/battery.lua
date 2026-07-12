@@ -8,6 +8,7 @@
 local gears = require("gears")
 local wibox = require("wibox")
 local beautiful = require("beautiful")
+local dpi = require("beautiful.xresources").apply_dpi
 local icons = require("theme.icons")
 
 local M = {}
@@ -15,11 +16,11 @@ local M = {}
 -- The charging glyph (bolt overlay) doesn't sit centered on its own advance
 -- width the same way the plain battery glyph does -- keyed by charging
 -- state since it's the SAME widget instance switching glyphs at runtime.
--- Space COUNT (not px), same as widgets/network.lua's opts.pad_left/right --
--- padding the string is the version of this nudge that doesn't corrupt the
--- glyph's render (wrapping the widget in wibox.container.margin did).
-local PAD_CHARGING     = { left = 0, right = 0 }
-local PAD_NOT_CHARGING = { left = 0, right = 0 }
+-- Px (via dpi), same as the other icon widgets' opts.pad_left/right, applied
+-- through wibox.container.margin -- updated in place on every tick since
+-- battery needs two distinct pad sets instead of one fixed opts table.
+local PAD_CHARGING     = { left = dpi(5), right = dpi(0) }
+local PAD_NOT_CHARGING = { left = dpi(7), right = dpi(0) }
 
 local function find_battery_path()
     for i = 0, 3 do
@@ -79,8 +80,12 @@ function M.new()
 
     local battery_icon = wibox.widget {
         font   = beautiful.font,
-        align  = "center",
+        align  = "left",
         widget = wibox.widget.textbox,
+    }
+    local battery_icon_wrapped = wibox.widget {
+        battery_icon,
+        widget = wibox.container.margin,
     }
     local battery_pct = wibox.widget {
         font   = beautiful.font,
@@ -98,7 +103,9 @@ function M.new()
         end
 
         local pad = (status == "Charging") and PAD_CHARGING or PAD_NOT_CHARGING
-        battery_icon.text = string.rep(" ", pad.left) .. battery_tier_icon(capacity, status) .. string.rep(" ", pad.right)
+        battery_icon_wrapped.left = pad.left
+        battery_icon_wrapped.right = pad.right
+        battery_icon.text = battery_tier_icon(capacity, status)
         -- No "%" (redundant in a bar this narrow) and a smaller font at
         -- 100 (3 digits) -- at the normal size "100" doesn't fit the
         -- vertical bar's width and wraps onto a second line.
@@ -118,7 +125,7 @@ function M.new()
 
     return wibox.widget {
         layout = wibox.layout.fixed.vertical,
-        battery_icon,
+        battery_icon_wrapped,
         battery_pct,
     }
 end

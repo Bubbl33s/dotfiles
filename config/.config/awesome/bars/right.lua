@@ -16,6 +16,7 @@ local arrows = require("theme.arrows")
 local segment = require("theme.segment")
 
 local power_widget = require("widgets.power")
+local mediaplayer_widget = require("widgets.mediaplayer")
 
 local M = {}
 local colors = beautiful.palette
@@ -52,6 +53,7 @@ gears.timer {
 
 -- Power is also a single, shared, system-wide widget instance.
 local pow_widget = power_widget.new()
+local media_widget = mediaplayer_widget.new()
 
 -- Current layout name as text (qtile CurrentLayout)
 local function build_layoutname(s)
@@ -89,6 +91,7 @@ function M.build_right(s)
         layout = wibox.layout.fixed.horizontal,
     }
 
+    items[#items + 1] = segment.pill({ media_widget }, { bg = beautiful.music_bg, gap = dpi(10), spacing = dpi(4) })
     items[#items + 1] = tail_arrow
     -- Space between tail_arrow and the layout-name pill -- edit this width.
     items[#items + 1] = segment.gap(dpi(10), colors.c4)

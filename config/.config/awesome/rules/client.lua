@@ -66,3 +66,19 @@ client.connect_signal("manage", function(c)
         c:to_secondary_section()
     end
 end)
+
+-- Fullscreen games (Steam/Proton) commonly auto-minimize themselves
+-- (WM_STATE: Iconic) when they lose input focus -- see keys/global.lua for
+-- the manual un-minimize fallback used while cycling focus. Restore them
+-- automatically as soon as their tag is selected again, so switching back
+-- doesn't just show the wallpaper. Scoped to c.fullscreen so it never
+-- touches ordinary windows minimized on purpose (those aren't fullscreen).
+tag.connect_signal("property::selected", function(t)
+    if not t.selected then return end
+    for _, c in ipairs(t:clients()) do
+        if c.minimized and c.fullscreen then
+            c.minimized = false
+            c:emit_signal("request::activate", "tag.autorestore", {raise = true})
+        end
+    end
+end)

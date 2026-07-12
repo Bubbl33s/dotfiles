@@ -44,6 +44,14 @@ icons.bluetooth_off       = "󰂲"
 icons.bluetooth_on        = "󰂯"
 icons.bluetooth_connected = "󰂱"
 
+-- Now-playing (widgets/mediaplayer.lua): bar glyph plus popup transport
+-- controls, play/pause swapped per current playerctl status.
+icons.music       = "󰝚 "
+icons.music_play  = "󰐊"
+icons.music_pause = "󰏤"
+icons.music_prev  = "󰒮"
+icons.music_next  = "󰒭"
+
 -- Volume: up/down are plain Unicode triangles (not a Nerd Font PUA
 -- codepoint) -- guaranteed to render in any font, no glyph-guessing risk,
 -- used as the raise/lower click targets in widgets/volume.lua (which now

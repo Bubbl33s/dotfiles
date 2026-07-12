@@ -59,7 +59,7 @@ theme.fg_urgent     = colors.l
 theme.fg_minimize   = colors.t
 
 -- qtile: layout margin=8, border_width=4
-theme.useless_gap   = dpi(8)
+theme.useless_gap   = dpi(5)
 theme.gap_single_client = true
 theme.border_width  = dpi(4)
 theme.border_color_normal = colors.c4
@@ -106,6 +106,9 @@ theme.layoutname_bg  = colors.c4 -- "tile"/"floating" layout name pill
 theme.kblayout_bg    = colors.c4 -- keyboard layout ("latam"/"us") pill
 theme.date_bg        = colors.c4 -- calendar + date pill
 theme.time_bg        = colors.c4 -- clock + time pill
+theme.music_bg       = colors.b -- now-playing pill (widgets/mediaplayer.lua)
+theme.music_button_bg = colors.c3 -- mediaplayer popup: prev/next control pills
+theme.music_accent    = colors.c1 -- mediaplayer popup: play/pause pill (emphasized)
 
 -- The wibar's own geometry (bars/init.lua's awful.wibar height + margins).
 -- Named here, instead of inline literals in bars/init.lua, so anything
@@ -114,7 +117,7 @@ theme.time_bg        = colors.c4 -- clock + time pill
 -- the screen edge) reads the same single source of truth.
 theme.wibar_height      = dpi(30)
 theme.wibar_margin_top  = dpi(10)
-theme.wibar_margin_side = dpi(15)
+theme.wibar_margin_side = dpi(10)
 
 -- The vertical bar (bars/vertical.lua) shares the same top-right corner as
 -- the horizontal one. Deliberately UNDER-clears the horizontal bar's own
