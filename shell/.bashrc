@@ -138,7 +138,7 @@ alias restart-network='sudo systemctl restart NetworkManager'
 #source ~/anaconda3/etc/profile.d/conda.sh
 # export PATH=$PATH:/usr/lib/w3m/w3mimgdisplay
 
-neofetch
+fastfetch
 
 # export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -164,7 +164,7 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 
 # Iniciar Oh My Posh
-eval "$(oh-my-posh init bash --config /usr/share/oh-my-posh/themes/velvet.omp.json)"
+eval "$(oh-my-posh init bash --config "$HOME/.config/oh-my-posh/dark-gothic-red.omp.json")"
 shopt -s nocaseglob
 bind 'set completion-ignore-case on'
 bind 'set show-all-if-ambiguous on'
@@ -185,12 +185,18 @@ if [ -f /usr/share/bash-completion/completions/git ]; then
 fi
 
 # Reemplazar ls con eza para tener iconos y colores
-alias ls='eza --icons --group-directories-first'
-alias ll='eza -l --icons --git --group-directories-first'
-alias la='eza -la --icons --git --group-directories-first'
-alias tree='eza --tree --icons'
+# LS_COLORS="" fuerza a eza a ignorar los colores por extensión de vivid y
+# usar solo la paleta roja definida en EZA_COLORS (ver más abajo)
+alias ls='LS_COLORS="" eza --icons --group-directories-first'
+alias ll='LS_COLORS="" eza -l --icons --git --group-directories-first'
+alias la='LS_COLORS="" eza -la --icons --git --group-directories-first'
+alias tree='LS_COLORS="" eza --tree --icons'
 
 export LS_COLORS="$(vivid generate dracula)"
+
+# Forzar paleta roja del tema (Dark Gothic Red) en vez de colores por tipo/extensión
+export EZA_COLORS="reset:di=1;38;2;122;31;32:fi=38;2;92;23;23:ex=1;38;2;152;20;17:ln=4;38;2;122;31;32:or=1;4;38;2;152;20;17"
+
 export PATH="$HOME/.local/bin:$PATH"
 
 export PYENV_ROOT="$HOME/.pyenv"

@@ -12,7 +12,7 @@ Arrancás con `archinstall` y terminás con mi escritorio Qtile + esquema de col
 | Componente     | Tema / Paleta                                            |
 |----------------|----------------------------------------------------------|
 | WM (Qtile)     | Paleta custom rosa: `#13000a` bg, `#bf6b99`/`#b33b72` accent |
-| Prompt (bash)  | oh-my-posh `velvet` (degradado púrpura)                  |
+| Prompt (bash)  | oh-my-posh `dark-gothic-red` (degradado rojo, trackeado en `config/.config/oh-my-posh/`) |
 | Launcher (Rofi)| `rounded-pink-dark` (`#EC407A` accent)                   |
 | Terminal       | Alacritty (opacidad 0.95)                                 |
 | Editor (Neovim)| `yozakura` (`night_blue`, bg `#1a1a26`)                  |
@@ -176,7 +176,7 @@ sudo pacman -S --needed \
   xdg-desktop-portal-gtk xdg-user-dirs \
   vlc w3m rclone spotify-launcher \
   libreoffice-fresh drawio-desktop \
-  neofetch htop tree eza mediainfo poppler highlight \
+  fastfetch chafa htop tree eza mediainfo poppler highlight \
   ranger atool zip unzip unrar
 ```
 
@@ -252,7 +252,7 @@ stow icons
 
 Al stowear `shell/`, tu `.bashrc` ya tiene:
 
-- Prompt **oh-my-posh** con tema `velvet`
+- Prompt **oh-my-posh** con tema propio `dark-gothic-red` (`~/.config/oh-my-posh/`)
 - `shopt -s nocaseglob` → autocompletado case-insensitive
 - `HISTCONTROL=ignoreboth` → no duplica comandos, ignora los que empiezan con espacio
 - `HISTSIZE=10000` / `HISTFILESIZE=20000` → historial grande
@@ -260,7 +260,7 @@ Al stowear `shell/`, tu `.bashrc` ya tiene:
 - `LS_COLORS` generado con **vivid** (paleta dracula)
 - **pyenv** y **nvm** inicializados automáticamente
 - Git bash completion
-- `neofetch` al abrir terminal
+- `fastfetch` al abrir terminal (config en `~/.config/fastfetch/`)
 
 ---
 

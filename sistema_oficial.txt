@@ -12,6 +12,7 @@ bluez
 bluez-utils
 brightnessctl
 cbatticon
+chafa
 clutter
 clutter-gtk
 cmake
@@ -23,6 +24,7 @@ drawio-desktop
 dunst
 efibootmgr
 engrampa
+fastfetch
 feh
 ffmpegthumbnailer
 firefox
