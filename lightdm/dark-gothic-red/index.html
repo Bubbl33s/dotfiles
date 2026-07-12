@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Dark Gothic Red</title>
+<style>
+	/* Palette: dotfiles/THEME.md (Dark Gothic Red) */
+	:root {
+		--w:   #ffffff; /* pure white */
+		--b:   #000000; /* pure black (power pill) */
+		--l:   #f2eaea; /* main text */
+		--d:   #050001; /* general background */
+		--t:   #cf91b5; /* pastel accent (secondary text) */
+		--c_1: #e81509; /* bright red (urgent/highlight) */
+		--c1:  #7a1f20; /* dark red */
+		--c2:  #5c1717; /* darker red (focused window) */
+		--c3:  #3f0f10; /* deep dark red */
+		--c4:  #300c0d; /* pill background */
+		--c5:  #20080a; /* near-black red (normal borders) */
+	}
+
+	html, body {
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		overflow: hidden;
+		background-color: var(--d);
+	}
+
+	html {
+		opacity: 1;
+		transition: opacity 1.2s ease-in;
+	}
+
+	html.session_starting {
+		opacity: 0;
+	}
+
+	body {
+		font-family: "UbuntuMono Nerd Font", "UbuntuMono Nerd Font Mono", monospace;
+		font-size: 16px;
+		color: var(--l);
+		background-image:
+			radial-gradient(ellipse at center,
+				rgba(5, 0, 1, 0.25) 0%,
+				rgba(5, 0, 1, 0.75) 100%),
+			url("background.jpeg");
+		background-size: cover;
+		background-position: center;
+	}
+
+	/* --- Pills (mirror the wibar pills: c4 body, c5 border, 6px radius) --- */
+	.pill {
+		background-color: transparent;
+		border: 1px solid var(--c5);
+		border-radius: 6px;
+		box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+	}
+
+	/* --- Clock, top-right (bar margins: 10px top, 15px side) --- */
+	#clock {
+		position: absolute;
+		top: 10px;
+		right: 15px;
+		padding: 6px 16px;
+		text-align: right;
+	}
+
+	#clock .time {
+		font-size: 44px;
+		font-weight: bold;
+		color: var(--c1);
+	}
+
+	#clock .date {
+		font-weight: bold;
+		font-size: 22px;
+		color: var(--c1);
+	}
+
+	/* --- Login panel, centered: avatar left, credentials right --- */
+	#panel {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		display: flex;
+		align-items: center;
+		gap: 24px;
+		padding: 24px 28px;
+		background-color: rgba(5, 0, 1, 0.88); /* d, slightly translucent */
+		border: 1px solid var(--c5);
+		border-radius: 8px; /* client corner radius */
+		box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+		box-sizing: border-box;
+	}
+
+	#avatar {
+		width: 110px;
+		height: 110px;
+		object-fit: cover;
+		border-radius: 8px; /* rounded square, not a circle */
+		border: 1px solid var(--c2);
+	}
+
+	#login {
+		width: 240px;
+		text-align: left;
+	}
+
+	#username {
+		font-size: 16px;
+		color: var(--t);
+		margin-bottom: 10px;
+		cursor: pointer;
+		transition: color 0.2s ease;
+	}
+
+	#username:hover {
+		color: var(--c_1);
+	}
+
+	#entry {
+		width: 100%;
+		padding: 10px 12px;
+		box-sizing: border-box;
+		font-family: inherit;
+		font-size: 16px;
+		color: var(--l);
+		background-color: var(--d);
+		border: 1px solid var(--c5);
+		border-radius: 6px;
+		outline: none;
+		transition: border-color 0.3s ease;
+	}
+
+	#entry:focus {
+		border-color: var(--c1); /* focus accent, same rule as Thunar entries */
+	}
+
+	#entry::placeholder {
+		color: var(--t);
+	}
+
+	#message {
+		margin-top: 14px;
+		min-height: 20px;
+		font-size: 14px;
+		color: var(--t);
+	}
+
+	#message.error {
+		color: var(--c1);
+	}
+
+	/* --- Power pill, bottom-right (the only black pill, per THEME.md) --- */
+	#power {
+		position: absolute;
+		bottom: 10px;
+		right: 15px;
+		background-color: var(--b);
+		border: 1px solid var(--c5);
+		border-radius: 6px;
+		box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+		padding: 4px 6px;
+	}
+
+	#power button {
+		font-family: inherit;
+		font-size: 20px;
+		color: var(--l);
+		background: none;
+		border: none;
+		padding: 4px 10px;
+		cursor: pointer;
+		transition: color 0.2s ease;
+	}
+
+	#power button:hover {
+		color: var(--c1);
+	}
+</style>
+</head>
+
+<body>
+	<div id="clock" class="pill">
+		<div class="time" id="time">--:--</div>
+		<div class="date" id="date"></div>
+	</div>
+
+	<div id="panel">
+		<img id="avatar" src="avatar.jpg" alt="" onerror="this.style.display='none'">
+		<div id="login">
+			<div id="username" title="Change user" onclick="change_user()"></div>
+			<form action="javascript:handle_input();">
+				<input id="entry" autofocus>
+			</form>
+			<div id="message"></div>
+		</div>
+	</div>
+
+	<!-- IEC power symbols are real Unicode (not PUA), so they render even
+	     if the Nerd Font ever changes its private glyph map -->
+	<div id="power">
+		<button type="button" title="Suspend" onclick="power_action('suspend')">&#x23fe;</button>
+		<button type="button" title="Restart" onclick="power_action('restart')">&#xead2;</button>
+		<button type="button" title="Shutdown" onclick="power_action('shutdown')">&#xf011;</button>
+	</div>
+
+<script>
+	/*********************************************************/
+	/*               Callbacks for the greeter               */
+	/*********************************************************/
+
+	window.show_prompt = function(text, type) {
+		// type is either "text" or "password"
+		var entry = document.getElementById("entry");
+		entry.placeholder = text.replace(/:?\s*$/, "");
+		entry.value = "";
+		entry.type = type;
+		entry.focus();
+		if (type === "password" && lightdm.authentication_user) {
+			set_username_label(lightdm.authentication_user);
+		}
+	};
+
+	window.show_message = function(text, type) {
+		if (!text) {
+			return;
+		}
+		var message = document.getElementById("message");
+		// type is either "info" or "error"
+		message.className = type === "error" ? "error" : "";
+		message.textContent = text;
+	};
+
+	window.authentication_complete = function() {
+		if (lightdm.is_authenticated) {
+			if (lightdm.authentication_user) {
+				localStorage.setItem(USER_KEY, lightdm.authentication_user);
+			}
+			document.documentElement.addEventListener("transitionend", function() {
+				lightdm.start_session_sync();
+			});
+			document.documentElement.className = "session_starting";
+		} else {
+			show_message("Authentication failed", "error");
+			setTimeout(start_authentication, 2500);
+		}
+	};
+
+	window.autologin_timer_expired = function(username) {
+		/* Stub. Does nothing. */
+	};
+
+	/*******************************************************************/
+	/*                Functions local to this theme                    */
+	/*******************************************************************/
+
+	var USER_KEY = "dgr_last_user";
+
+	function clear_message() {
+		var message = document.getElementById("message");
+		message.className = "";
+		message.textContent = "";
+	}
+
+	function set_username_label(name) {
+		document.getElementById("username").textContent = name || "log in";
+	}
+
+	window.start_authentication = function() {
+		clear_message();
+		var saved = localStorage.getItem(USER_KEY);
+		set_username_label(saved);
+		if (saved) {
+			// remembered user: the greeter asks for the password only
+			lightdm.authenticate(saved);
+		} else {
+			// no user argument: the greeter prompts for the username first
+			lightdm.authenticate();
+		}
+	};
+
+	window.change_user = function() {
+		localStorage.removeItem(USER_KEY);
+		try {
+			lightdm.cancel_authentication();
+		} catch (e) {
+			/* no authentication in progress */
+		}
+		start_authentication();
+	};
+
+	window.handle_input = function() {
+		var entry = document.getElementById("entry");
+		lightdm.respond(entry.value);
+	};
+
+	window.power_action = function(action) {
+		var allowed = {
+			suspend:  lightdm.can_suspend,
+			restart:  lightdm.can_restart,
+			shutdown: lightdm.can_shutdown
+		};
+		if (allowed[action]) {
+			lightdm[action]();
+		}
+	};
+
+	function update_clock() {
+		var now = new Date();
+		var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+		var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		var hh = String(now.getHours()).padStart(2, "0");
+		var mm = String(now.getMinutes()).padStart(2, "0");
+		document.getElementById("time").textContent = hh + ":" + mm;
+		document.getElementById("date").textContent =
+			days[now.getDay()] + " " + now.getDate() + " " + months[now.getMonth()];
+	}
+</script>
+<!-- Uncomment for browser testing outside the greeter: -->
+<!-- <script src="../_vendor/js/mock.js"></script> -->
+<script>
+	// The greeter injects the `lightdm` object asynchronously: touching it
+	// at parse time throws ReferenceError and trips detect_theme_errors
+	// (even the stock "simple" theme fails this way). Wait for window load,
+	// then poll until the object exists.
+	function init() {
+		if (typeof lightdm === "undefined" || lightdm === null) {
+			setTimeout(init, 100);
+			return;
+		}
+		start_authentication();
+	}
+
+	window.addEventListener("load", function() {
+		update_clock();
+		setInterval(update_clock, 10000);
+		init();
+	});
+</script>
+</body>
+</html>

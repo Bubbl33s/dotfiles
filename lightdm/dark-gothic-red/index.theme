@@ -1,0 +1,5 @@
+[theme]
+name=Dark Gothic Red
+description=Dark Gothic Red login theme matching the AwesomeWM setup (see dotfiles/THEME.md)
+engine=lightdm-webkit-greeter
+url=index.html
