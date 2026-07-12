@@ -11,6 +11,7 @@ import shlex
 import subprocess
 import sys
 from pathlib import Path
+from xml.sax.saxutils import escape
 
 MAP_FILE = Path.home() / ".config" / "rofi" / "app-icons.map"
 DESKTOP_DIRS = [
@@ -19,6 +20,11 @@ DESKTOP_DIRS = [
     Path("/var/lib/flatpak/exports/share/applications"),
 ]
 FIELD_CODE_RE = re.compile(r"%[fFuUick]")
+
+# Vertical nudge for the glyph relative to the app name's baseline, in Pango
+# `rise` units (1/1024 pt). Negative moves the glyph DOWN, positive moves it
+# UP. Tune this by hand: change the number, save, then reopen the launcher.
+ICON_RISE = "-1024"
 
 
 def normalize(s):
@@ -103,9 +109,7 @@ def main():
 
     selected = sys.argv[1] if len(sys.argv) > 1 else None
     if selected:
-        # Strip the leading "glyph  " prefix back off to recover the name.
-        name = selected.split("  ", 1)[-1].strip()
-        fields = apps.get(name)
+        fields = apps.get(selected)
         if fields:
             cmd = build_exec_command(fields)
             subprocess.Popen(
@@ -117,9 +121,15 @@ def main():
             )
         return
 
+    # markup-rows lets each row's `display` value use Pango markup (needed
+    # for the glyph's rise nudge below) while the row's plain text -- the
+    # app name -- stays what filtering matches and what comes back on
+    # selection, instead of re-parsing a "glyph  name" string by hand.
+    print("\0markup-rows\x1ftrue")
     for name in sorted(apps, key=str.lower):
         glyph = glyph_for_name(name, entries, default_glyph)
-        print(f"{glyph}  {name}")
+        display = f'<span rise="{ICON_RISE}">{escape(glyph)}</span>  {escape(name)}'
+        print(f"{name}\0display\x1f{display}")
 
 
 if __name__ == "__main__":

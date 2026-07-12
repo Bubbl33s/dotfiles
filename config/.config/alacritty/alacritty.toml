@@ -17,3 +17,36 @@ style = "Regular"
 key = "Return"
 mods = "Shift"
 chars = "\u001B\r"
+
+# Dark Gothic Red palette (see THEME.md)
+[colors.primary]
+background = "#050001"
+foreground = "#f2eaea"
+
+[colors.cursor]
+text = "#f2eaea"
+cursor = "#7a1f20"
+
+[colors.selection]
+background = "#5c1717"
+text = "#f2eaea"
+
+[colors.normal]
+black = "#20080a"
+red = "#b70803"
+green = "#6f8352"
+yellow = "#c2803d"
+blue = "#5e6f8c"
+magenta = "#cf91b5"
+cyan = "#6d9a97"
+white = "#d8caca"
+
+[colors.bright]
+black = "#3f0f10"
+red = "#e81509"
+green = "#8ba368"
+yellow = "#d4a94e"
+blue = "#7d8fae"
+magenta = "#e0aecb"
+cyan = "#8fbcb8"
+white = "#f2eaea"

@@ -1,0 +1,47 @@
+/* Gothic red/black/pastel-red rofi theme -- mirrors AwesomeWM's
+ * theme/init.lua palette (colors.d/l/c1-c5/c_1/c_2/t) so rofi matches
+ * the bar/menu theming. Layout is inherited from rounded-common.rasi;
+ * only palette, font, radii and the icon widget are overridden here.
+ */
+
+* {
+    bg0:    #050001F2; /* colors.d  -- same as menu_bg_normal */
+    bg1:    #300C0D;   /* colors.c4 -- same as bar pill backgrounds */
+    bg2:    #3F0F10B3; /* colors.c3 + alpha -- recessed message panel */
+    bg3:    #5C1717;   /* colors.c2 -- same as menu_bg_focus / bg_focus */
+    fg0:    #F2EAEA;   /* colors.l  -- same as menu_fg_normal / fg_normal */
+    fg1:    #F2EAEA;   /* colors.l  -- kept for rounded-common API parity */
+    fg2:    #CF91B5;   /* colors.t  -- same role as fg_minimize */
+    fg3:    #7A1F20;   /* colors.c1 -- dim placeholder text */
+}
+
+@import "rounded-common.rasi"
+
+* {
+    font: "UbuntuMono Nerd Font 12";
+}
+
+window {
+    border-radius: 10px;
+}
+
+inputbar {
+    border-radius: 6px;
+}
+
+message {
+    border-radius: 6px;
+}
+
+element {
+    border-radius: 6px;
+}
+
+/* nerdfont-launcher.py already bakes the app glyph into the entry TEXT
+ * ("{glyph}  {name}"), not into rofi's icon metadata. With show-icons
+ * still on, rofi otherwise reserves/renders an empty icon box per row --
+ * that's the blank space to the left of every entry. Disabling the
+ * widget removes it from the row layout entirely, for every mode. */
+element-icon {
+    enabled: false;
+}

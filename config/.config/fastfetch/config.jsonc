@@ -1,0 +1,126 @@
+// Dark Gothic Red — fastfetch config
+// Replicates the previous neofetch (ozozFetch) tree layout with the
+// red/black palette from THEME.md. ANSI color codes are used so the
+// output follows the Alacritty [colors] palette; truecolor is used
+// where the exact THEME.md hex matters (dark red ramp).
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "chafa",
+    "source": "~/.config/fastfetch/logo.png",
+    "width": 38,
+    "padding": { "top": 1, "right": 3 }
+  },
+  "display": {
+    "separator": "-> ",
+    "size": {
+      "maxPrefix": "MB"
+    },
+    "temp": {
+      "color": {
+        "green": "37",
+        "yellow": "91",
+        "red": "1;91"
+      }
+    },
+    "percent": {
+      "color": {
+        "green": "37",
+        "yellow": "91",
+        "red": "1;91"
+      }
+    }
+  },
+  "modules": [
+    {
+      "type": "title",
+      "color": {
+        "user": "91",
+        "at": "37",
+        "host": "31"
+      }
+    },
+    "break",
+    {
+      "type": "os",
+      "key": " OS",
+      "keyColor": "91"
+    },
+    {
+      "type": "kernel",
+      "key": " ├ ",
+      "keyColor": "91"
+    },
+    {
+      "type": "packages",
+      "key": " ├ ",
+      "keyColor": "91"
+    },
+    {
+      "type": "shell",
+      "key": " └ ",
+      "keyColor": "91"
+    },
+    "break",
+    {
+      "type": "wm",
+      "key": " DE/WM",
+      "keyColor": "31"
+    },
+    {
+      "type": "theme",
+      "key": " ├ ",
+      "keyColor": "31"
+    },
+    {
+      "type": "icons",
+      "key": " ├ ",
+      "keyColor": "31"
+    },
+    {
+      "type": "terminal",
+      "key": " └ ",
+      "keyColor": "31"
+    },
+    "break",
+    {
+      "type": "host",
+      "key": " PC",
+      "keyColor": "38;2;122;31;32"
+    },
+    {
+      "type": "cpu",
+      "key": " ├ ",
+      "keyColor": "38;2;122;31;32",
+      "temp": true
+    },
+    {
+      "type": "gpu",
+      "key": " ├ ",
+      "keyColor": "38;2;122;31;32",
+      "temp": true
+    },
+    {
+      "type": "memory",
+      "key": " ├ ",
+      "keyColor": "38;2;122;31;32"
+    },
+    {
+      "type": "uptime",
+      "key": " ├ ",
+      "keyColor": "38;2;122;31;32"
+    },
+    {
+      "type": "display",
+      "key": " └ ",
+      "keyColor": "38;2;122;31;32"
+    },
+    "break",
+    // THEME.md red ramp (near-black -> bright red) instead of the
+    // default ANSI 0-15 blocks, mirroring neofetch's block_range.
+    {
+      "type": "custom",
+      "format": "               \u001b[48;2;5;0;1m   \u001b[48;2;32;8;10m   \u001b[48;2;48;12;13m   \u001b[48;2;63;15;16m   \u001b[48;2;92;23;23m   \u001b[48;2;122;31;32m   \u001b[48;2;183;8;3m   \u001b[48;2;232;21;9m   \u001b[0m"
+    }
+  ]
+}

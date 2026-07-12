@@ -1,0 +1,83 @@
+# Dunst configuration — Dark Gothic Red theme
+# Palette source: ~/dotfiles/THEME.md (canonical: config/.config/awesome/theme/init.lua)
+
+[global]
+    ### Display ###
+    monitor = 0
+    follow = mouse
+
+    ### Geometry ###
+    # Align with the bar: side margin 15px, bar height 30 + top margin 10
+    origin = top-right
+    offset = (15, 40)
+    width = 350
+    height = (0, 300)
+    # Matches AwesomeWM useless_gap
+    gap_size = 8
+    padding = 10
+    horizontal_padding = 12
+
+    ### Frame ###
+    # Matches window border_width (4px) and client corner radius (8px)
+    frame_width = 4
+    corner_radius = 8
+    separator_height = 2
+    separator_color = frame
+    sort = yes
+
+    ### Text ###
+    font = UbuntuMono Nerd Font 12
+    line_height = 0
+    markup = full
+    # Dagger (U+2020) replaces the notification icon
+    format = "† <b>%s</b>\n%b"
+    alignment = left
+    vertical_alignment = center
+    show_age_threshold = 60
+    ellipsize = middle
+    ignore_newline = no
+    stack_duplicates = true
+    hide_duplicate_count = false
+    show_indicators = yes
+
+    ### Icons ###
+    # No image icons — the unicode dagger in `format` is the marker
+    icon_position = off
+
+    ### Progress bar (volume / brightness) ###
+    progress_bar = true
+    progress_bar_height = 10
+    progress_bar_frame_width = 1
+    progress_bar_min_width = 150
+    progress_bar_max_width = 300
+    progress_bar_corner_radius = 4
+    # White fill on near-black frame, like the bar's volume widget (w on c5)
+    highlight = "#ffffff"
+
+    ### Behavior ###
+    dmenu = /usr/bin/rofi -dmenu -p dunst
+    browser = /usr/bin/xdg-open
+    mouse_left_click = close_current
+    mouse_middle_click = do_action, close_current
+    mouse_right_click = close_all
+
+[urgency_low]
+    # bg d, fg t (secondary pastel), frame c5 (normal borders)
+    background = "#050001"
+    foreground = "#cf91b5"
+    frame_color = "#20080a"
+    timeout = 5
+
+[urgency_normal]
+    # bg d, fg l, frame c2 (focused-window red)
+    background = "#050001"
+    foreground = "#f2eaea"
+    frame_color = "#5c1717"
+    timeout = 8
+
+[urgency_critical]
+    # bg c4, fg l, frame c_1 (urgent/highlight red), sticky
+    background = "#300c0d"
+    foreground = "#f2eaea"
+    frame_color = "#e81509"
+    timeout = 0
