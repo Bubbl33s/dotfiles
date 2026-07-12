@@ -9,5 +9,5 @@
           (see THEME.md). Adjust font-size/y if the glyph sits off-center.
        If a glyph renders as a box, convert text to path (e.g. Inkscape). -->
   <text x="32" y="52" font-family="UbuntuMono Nerd Font" font-size="52"
-        text-anchor="middle" fill="#7a1f20">&#xf024b;</text>
+        text-anchor="middle" fill="#7a1f20">&#xeaef;</text>
 </svg>
