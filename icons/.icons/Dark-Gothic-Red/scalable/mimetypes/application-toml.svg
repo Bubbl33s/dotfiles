@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- Template: a Nerd Font glyph as an SVG icon.
+       IMPORTANT: the file MUST start with the <svg> tag — gdk-pixbuf sniffs
+       the first bytes to detect the format, and a comment or <?xml?> prolog
+       before <svg> makes it fail with "Unrecognized image file format".
+       1. Copy into scalable/places|mimetypes|emblems/ with the exact icon
+          name (e.g. scalable/places/folder.svg).
+       2. Replace the glyph inside <text> and pick a palette color for fill
+          (see THEME.md). Adjust font-size/y if the glyph sits off-center.
+       The font MUST be the Propo variant: in non-Propo Nerd Fonts the icon
+       ink overhangs the advance width, so text-anchor="middle" leaves the
+       glyph shifted right and cropped at the viewBox edge.
+       If a glyph renders as a box, convert text to path (e.g. Inkscape). -->
+  <text x="32" y="49" font-family="UbuntuMono Nerd Font Propo" font-size="52"
+        text-anchor="middle" fill="#7a1f20">&#xe6b2;</text>
+</svg>
