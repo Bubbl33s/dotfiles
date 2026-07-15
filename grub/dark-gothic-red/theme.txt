@@ -1,0 +1,41 @@
+# Dark Gothic Red — GRUB theme
+# Two-color scheme matching ranger's dark_gothic_red colorscheme:
+# c1 (#7a1f20) on black, inverted on selection (like ranger's `reverse` attr).
+
+desktop-image: "background.jpeg"
+desktop-color: "#000000"
+terminal-font: "Dark Gothic Red Regular 16"
+title-text: ""
+
++ boot_menu {
+	left = 5%
+	width = 45%
+	top = 5%
+	height = 35%
+	item_font = "Dark Gothic Red Bold 16"
+	item_color = "#7a1f20"
+	selected_item_font = "Dark Gothic Red Bold 16"
+	selected_item_color = "#f2eaea"
+	selected_item_pixmap_style = "select_*.png"
+	item_height = 28
+	item_padding = 4
+	item_spacing = 1
+	icon_width = 0
+	icon_height = 0
+	item_icon_space = 0
+	scrollbar = false
+}
+
++ progress_bar {
+	id = "__timeout__"
+	left = 20%
+	top = 78%
+	width = 60%
+	height = 18
+	font = "Dark Gothic Red Regular 16"
+	text_color = "#7a1f20"
+	fg_color = "#7a1f20"
+	bg_color = "#000000"
+	border_color = "#7a1f20"
+	text = "@TIMEOUT_NOTIFICATION_MIDDLE@"
+}
