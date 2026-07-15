@@ -165,10 +165,12 @@ window.thunar {
     border-top: 1px solid @dgr_c5;
 }
 
-/* Rubber-band selection — bright red = active state */
+/* Rubber-band selection — fill left transparent, alpha() fill renders
+ * opaque in this GTK/picom combo (confirmed bug, border-color applies
+ * fine but background-color alpha does not) */
 .thunar rubberband,
 .thunar .rubberband {
-    background-color: alpha(@dgr_c_1, 0.20);
+    background-color: transparent;
     border: 1px solid @dgr_c_1;
 }
 

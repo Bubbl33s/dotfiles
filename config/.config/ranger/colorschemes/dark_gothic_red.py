@@ -27,7 +27,7 @@ from ranger.gui.color import (
 # ANSI slots (exact theme hexes via Alacritty)
 NEAR_BLACK = 0    # c5 #20080a — near-black red
 RED = 1           # c_2 #b70803 — medium red, main structural color
-PASTEL = 5        # t #cf91b5 — pastel accent, secondary text
+PASTEL = 88        # t — pastel accent, secondary text
 EMBER = 8         # c3 #3f0f10 — deep dark red, faded/whisper states
 RED_BRIGHT = 9    # c_1 #e81509 — bright red, urgent/highlight ONLY
 TEXT = 15         # l #f2eaea — near-white text
