@@ -1,0 +1,22 @@
+[Added Associations]
+image/jpeg=imv.desktop;feh.desktop;
+application/x-mswinurl=code.desktop;
+application/yaml=code.desktop;
+application/vnd.debian.binary-package=engrampa.desktop;
+application/pdf=brave-browser.desktop;libreoffice-draw.desktop;google-chrome.desktop;
+image/png=brave-browser.desktop;feh.desktop;
+text/csv=code.desktop;
+video/mp4=brave-browser.desktop;
+audio/mpeg=brave-browser.desktop;
+
+[Default Applications]
+text/html=google-chrome.desktop
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+x-scheme-handler/about=google-chrome.desktop
+x-scheme-handler/unknown=google-chrome.desktop
+x-scheme-handler/jetbrains=jetbrains-toolbox.desktop
+x-scheme-handler/postman=Postman.desktop
+video/mp4=brave-browser.desktop
+audio/mpeg=brave-browser.desktop
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop
