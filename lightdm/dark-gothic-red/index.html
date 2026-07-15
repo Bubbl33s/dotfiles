@@ -44,14 +44,14 @@
 			radial-gradient(ellipse at center,
 				rgba(5, 0, 1, 0.25) 0%,
 				rgba(5, 0, 1, 0.75) 100%),
-			url("background.jpeg");
+			url("background.png");
 		background-size: cover;
 		background-position: center;
 	}
 
 	/* --- Pills (mirror the wibar pills: c4 body, c5 border, 6px radius) --- */
 	.pill {
-		background-color: transparent;
+		background-color: var(--c4);
 		border: 1px solid var(--c5);
 		border-radius: 6px;
 		box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
@@ -67,15 +67,14 @@
 	}
 
 	#clock .time {
-		font-size: 44px;
+		font-size: 28px;
 		font-weight: bold;
-		color: var(--c1);
+		color: var(--l);
 	}
 
 	#clock .date {
-		font-weight: bold;
-		font-size: 22px;
-		color: var(--c1);
+		font-size: 14px;
+		color: var(--t);
 	}
 
 	/* --- Login panel, centered: avatar left, credentials right --- */
@@ -135,7 +134,7 @@
 	}
 
 	#entry:focus {
-		border-color: var(--c1); /* focus accent, same rule as Thunar entries */
+		border-color: var(--c_1); /* focus accent, same rule as Thunar entries */
 	}
 
 	#entry::placeholder {
@@ -150,7 +149,7 @@
 	}
 
 	#message.error {
-		color: var(--c1);
+		color: var(--c_1);
 	}
 
 	/* --- Power pill, bottom-right (the only black pill, per THEME.md) --- */
@@ -177,7 +176,7 @@
 	}
 
 	#power button:hover {
-		color: var(--c1);
+		color: var(--c_1);
 	}
 </style>
 </head>
@@ -202,9 +201,9 @@
 	<!-- IEC power symbols are real Unicode (not PUA), so they render even
 	     if the Nerd Font ever changes its private glyph map -->
 	<div id="power">
-		<button type="button" title="Suspend" onclick="power_action('suspend')">&#x23fe;</button>
-		<button type="button" title="Restart" onclick="power_action('restart')">&#xead2;</button>
-		<button type="button" title="Shutdown" onclick="power_action('shutdown')">&#xf011;</button>
+		<button type="button" title="Suspend" onclick="power_action('suspend')">&#x23FE;</button>
+		<button type="button" title="Restart" onclick="power_action('restart')">&#x27F3;</button>
+		<button type="button" title="Shutdown" onclick="power_action('shutdown')">&#x23FB;</button>
 	</div>
 
 <script>
