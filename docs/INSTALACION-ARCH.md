@@ -104,9 +104,12 @@ pacstrap -K /mnt base linux linux-firmware amd-ucode \
   base-devel linux-headers git stow sudo nano vim
 ```
 
-> **`amd-ucode` es obligatorio** en este CPU (Ryzen). En la instalación original
-> se omitió por error y el sistema corre sin microcode: esta guía lo corrige.
-> El hook `microcode` de mkinitcpio lo integra automáticamente al initramfs.
+> **Microcode según el CPU**: `amd-ucode` en este equipo (Ryzen). Si replicás en
+> una máquina **Intel** (p. ej. el ThinkCentre), reemplazalo por **`intel-ucode`**.
+> Es lo único del pacstrap que depende del fabricante del CPU. En la instalación
+> original se omitió por error y el sistema corría sin microcode: esta guía lo
+> corrige. El hook `microcode` de mkinitcpio detecta el paquete instalado y lo
+> integra automáticamente al initramfs — no requiere configuración adicional.
 
 Generar el fstab:
 
@@ -265,6 +268,22 @@ sudo pacman -S --needed mesa lib32-mesa xf86-video-amdgpu vulkan-radeon \
 ```
 
 La iGPU AMD (Cezanne) maneja el escritorio; la RTX 3050 queda disponible para offload (`prime-run` requiere `nvidia-prime` si se quiere usar).
+
+### Adaptación a una máquina Intel (p. ej. ThinkCentre)
+
+Solo cambian dos cosas respecto a esta guía; todo lo demás (particionado aparte, dotfiles, temas, paquetes) es idéntico:
+
+```bash
+# 1. Microcode (en el pacstrap o después):
+sudo pacman -S --needed intel-ucode      # en vez de amd-ucode
+
+# 2. Drivers GPU:
+sudo pacman -S --needed mesa lib32-mesa vulkan-intel
+# El driver modesetting incluido en xorg-server es suficiente para iGPU Intel
+# moderna; instalar xf86-video-intel solo si hay problemas de tearing.
+```
+
+Tras instalar el microcode, verificar con `dmesg | grep microcode` después de reiniciar.
 
 ### Xorg + LightDM
 
