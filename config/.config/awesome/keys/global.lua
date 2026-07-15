@@ -4,6 +4,7 @@
 ---------------------------------------------
 
 local awful = require("awful")
+local tags = require("tags")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
@@ -35,7 +36,26 @@ awful.keyboard.append_global_keybindings({
               {description = "screenshot", group = "launcher"}),
     awful.key({ MODKEY            }, "e", function () awful.spawn("thunar") end,
               {description = "spawn file manager", group = "launcher"}),
-    awful.key({ MODKEY            }, "p", function () awful.spawn("/home/bubbles/.config/qtile/toggle_monitors.sh") end,
+    awful.key({ MODKEY            }, "p", function ()
+        -- Disconnected outputs can keep a stale CRTC/mode (e.g. after unplugging
+        -- an HDMI monitor), which leaves the virtual screen oversized and lets
+        -- the cursor wander into dead space. Force those off before autorandr
+        -- picks a profile, so profile matching and screen geometry stay correct.
+        --
+        -- `is_primary` in bars/init.lua is only computed once, when a screen
+        -- is first decorated -- it never gets recomputed if screen.primary
+        -- changes later on the same (surviving) screen object, e.g. going
+        -- from docked (HDMI primary) down to laptop-only (eDP becomes sole/
+        -- primary screen). restarting awesome after the switch settles
+        -- forces every screen to be redecorated from scratch with the
+        -- now-correct primary flag, same fix the old qtile-era
+        -- toggle_monitors.sh already used.
+        awful.spawn.easy_async_with_shell(
+            "for o in $(xrandr | grep -oP '^\\S+(?= disconnected (primary )?\\d+x\\d+\\+)'); do "
+            .. "xrandr --output \"$o\" --off; done; autorandr --change",
+            function() awesome.restart() end
+        )
+    end,
               {description = "toggle monitors", group = "screen"}),
     awful.key({ MODKEY            }, "space", function () KEYBOARD_LAYOUT:next_layout() end,
               {description = "next keyboard layout", group = "awesome"}),
@@ -182,20 +202,42 @@ awful.keyboard.append_global_keybindings({
     },
 })
 
--- Tags (qtile groups 1-9)
+-- Tags (qtile groups 1-9): tags.list is a single global pool shared across
+-- screens (see tags.lua), so switching to a tag already shown on another
+-- screen swaps the two screens' displayed tags instead of hiding one --
+-- matches qtile's multi-monitor group-switch behavior.
+local function switch_to_tag(index)
+    local t = tags.list[index]
+    if not t then return end
+
+    local focused = awful.screen.focused()
+    if t.selected and t.screen == focused then
+        return t
+    end
+
+    local other_screen = (t.selected and t.screen ~= focused) and t.screen or nil
+    local current = focused.selected_tag
+
+    if other_screen then
+        if current then current.screen = other_screen end
+        t.screen = focused
+        t:view_only()
+        if current then current:view_only() end
+    else
+        t.screen = focused
+        t:view_only()
+    end
+
+    return t
+end
+
 awful.keyboard.append_global_keybindings({
     awful.key {
         modifiers   = { MODKEY },
         keygroup    = "numrow",
         description = "only view tag",
         group       = "tag",
-        on_press    = function (index)
-            local screen = awful.screen.focused()
-            local tag = screen.tags[index]
-            if tag then
-                tag:view_only()
-            end
-        end,
+        on_press    = switch_to_tag,
     },
     awful.key {
         modifiers   = { MODKEY, "Control" },
@@ -203,8 +245,7 @@ awful.keyboard.append_global_keybindings({
         description = "toggle tag",
         group       = "tag",
         on_press    = function (index)
-            local screen = awful.screen.focused()
-            local tag = screen.tags[index]
+            local tag = tags.list[index]
             if tag then
                 awful.tag.viewtoggle(tag)
             end
@@ -216,12 +257,12 @@ awful.keyboard.append_global_keybindings({
         description = "move focused client to tag and follow",
         group       = "tag",
         on_press    = function (index)
-            if client.focus then
-                local tag = client.focus.screen.tags[index]
+            local c = client.focus
+            if c then
+                -- qtile: togroup(..., switch_group=True)
+                local tag = switch_to_tag(index)
                 if tag then
-                    -- qtile: togroup(..., switch_group=True)
-                    client.focus:move_to_tag(tag)
-                    tag:view_only()
+                    c:move_to_tag(tag)
                 end
             end
         end,

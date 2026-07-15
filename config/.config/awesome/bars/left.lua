@@ -12,9 +12,33 @@ local beautiful = require("beautiful")
 local icons = require("theme.icons")
 local dpi = require("beautiful.xresources").apply_dpi
 local arrows = require("theme.arrows")
+local tags = require("tags")
 
 local M = {}
 local colors = beautiful.palette
+
+-- Tags are a shared global pool (see tags.lua), so `t.selected` is true
+-- wherever a tag is currently displayed, even on another screen -- awesome's
+-- stock taglist has no per-screen "focus" concept like qtile's groupbox does.
+-- Patch the label once so a tag only gets focus styling on the screen it is
+-- actually assigned to; on any other screen's bar it renders as a plain
+-- occupied/empty tag instead.
+local base_taglist_label = awful.widget.taglist.taglist_label
+function awful.widget.taglist.taglist_label(t, args)
+    args = args or {}
+    if t.selected and args.screen and t.screen ~= args.screen then
+        local theme = beautiful.get()
+        local occupied = #t:clients() > 0
+        local shim = setmetatable({
+            bg_focus = occupied and (args.bg_occupied or theme.taglist_bg_occupied)
+                                 or (args.bg_empty or theme.taglist_bg_empty),
+            fg_focus = occupied and (args.fg_occupied or theme.taglist_fg_occupied)
+                                 or (args.fg_empty or theme.taglist_fg_empty),
+        }, { __index = args })
+        return base_taglist_label(t, shim)
+    end
+    return base_taglist_label(t, args)
+end
 
 -- Width AND height are capped so a long title truncates on one line
 -- instead of growing the bar or word-wrapping onto a second line.
@@ -53,6 +77,8 @@ function M.build_left(s)
     s.mytaglist = awful.widget.taglist {
         screen  = s,
         filter  = awful.widget.taglist.filter.all,
+        source  = function() return tags.list end,
+        style   = { screen = s },
         buttons = {
             awful.button({ }, 1, function(t) t:view_only() end),
             awful.button({ MODKEY }, 1, function(t)

@@ -21,10 +21,52 @@ local dpi = require("beautiful.xresources").apply_dpi
 local left_bar     = require("bars.left")
 local right_bar    = require("bars.right")
 local vertical_bar = require("bars.vertical")
+local tags         = require("tags")
+
+-- Re-applies the primary-only margins/geometry to an already-built screen.
+-- `request::desktop_decoration` fires synchronously from screen's C-level
+-- `_added` handler (awful/screen.lua) -- on the very first screen, that can
+-- run before X/awesome has attached "primary" to any output yet, so
+-- `s == screen.primary` reads false at construction time even though the
+-- screen ends up the (only, primary) one a moment later. Verified live:
+-- one gears.timer.delayed_call tick (end of current glib iteration) was
+-- NOT enough -- primary assignment lands even later. Rather than guess a
+-- delay, `primary_changed` (fired whenever screen.primary actually settles
+-- or changes, e.g. docking/undocking) re-derives is_primary and reapplies
+-- just the margins/geometry bits below, on every screen, whenever that
+-- happens -- correct regardless of how long the initial assignment takes.
+local function apply_primary_geometry(s)
+    if not (s.valid and s.mywibox and s.myverticalwibox) then return end
+
+    local is_primary = (s == screen.primary)
+
+    s.mywibox.margins = is_primary and {
+        top   = beautiful.wibar_margin_top,
+        left  = beautiful.wibar_margin_side,
+        right = beautiful.wibar_margin_side,
+    } or {}
+
+    s.myverticalwibox.margins = is_primary and {
+        right = beautiful.wibar_margin_side,
+    } or {}
+
+    s.myverticalwibox:geometry(is_primary and {
+        y      = s.geometry.y + beautiful.wibar_vertical_margin_top,
+        height = s.geometry.height - beautiful.wibar_vertical_margin_top - beautiful.wibar_margin_top - dpi(10),
+    } or {
+        y      = s.geometry.y,
+        height  = s.geometry.height,
+    })
+end
+
+screen.connect_signal("primary_changed", function()
+    for s in screen do
+        apply_primary_geometry(s)
+    end
+end)
 
 screen.connect_signal("request::desktop_decoration", function(s)
-    -- Each screen has its own tag table (qtile groups: label 󰫤)
-    awful.tag({ "󰫤 ", "󰫤 ", "󰫤 ", "󰫤 ", "󰫤 ", "󰫤 ", "󰫤 ", "󰫤 ", "󰫤 " }, s, awful.layout.layouts[1])
+    tags.init(s)
 
     s.mypromptbox = awful.widget.prompt()
 
@@ -108,16 +150,13 @@ screen.connect_signal("request::desktop_decoration", function(s)
     -- reserved tiling space.
     s.myverticalwibox.width = beautiful.wibar_height
 
-    if is_primary then
-        -- Pushes the vertical bar's top down past the horizontal bar's own
-        -- bottom edge (margin_top + height) plus one more margin_top gap,
-        -- and shrinks its height to match -- otherwise (with `stretch`
-        -- disabled) it would just keep the full-screen height from
-        -- construction and run off the bottom edge instead of stopping
-        -- wibar_margin_top short of it, same as the horizontal bar does.
-        s.myverticalwibox:geometry({
-            y      = s.geometry.y + beautiful.wibar_vertical_margin_top,
-            height = s.geometry.height - beautiful.wibar_vertical_margin_top - beautiful.wibar_margin_top - dpi(10),
-        })
-    end
+    -- Pushes the vertical bar's top down past the horizontal bar's own
+    -- bottom edge (margin_top + height) plus one more margin_top gap, and
+    -- shrinks its height to match, on primary screens -- otherwise (with
+    -- `stretch` disabled) it would just keep the full-screen height from
+    -- construction and run off the bottom edge instead of stopping
+    -- wibar_margin_top short of it, same as the horizontal bar does.
+    -- Delegated to apply_primary_geometry so `primary_changed` can redo it
+    -- later without duplicating this logic.
+    apply_primary_geometry(s)
 end)

@@ -74,6 +74,28 @@ require("keys.global")
 require("keys.client")
 -- }}}
 
+-- {{{ Focus follows cursor on tag switch
+-- Awesome's own tag-switch handler (check_focus_tag in
+-- awful/permissions/init.lua, wired up by requiring awful.autofocus above)
+-- restores focus from that screen's focus HISTORY on every tag change --
+-- whichever client was last focused there wins, regardless of where the
+-- cursor actually is. It queues that restore via gears.timer.delayed_call
+-- on tag's "property::selected" signal. Queuing our own delayed_call on the
+-- same signal runs after it (same signal, same queuing mechanism -> FIFO
+-- order), so this re-focuses whatever client is now under the pointer, if
+-- any -- matching qtile's group-switch behavior instead of Awesome's.
+tag.connect_signal("property::selected", function(t)
+    if not t.selected then return end
+    gears.timer.delayed_call(function()
+        local c = mouse.current_client
+        if c and c:isvisible() then
+            client.focus = c
+            c:raise()
+        end
+    end)
+end)
+-- }}}
+
 -- {{{ Rules
 require("rules.client")
 require("rules.notifications")

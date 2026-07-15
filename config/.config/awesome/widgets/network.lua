@@ -1,10 +1,11 @@
 ---------------------------------------------
 -- Connectivity widget: wifi signal tier / wired indicator --
 -- Replaces the old kB/s throughput widget. Detects the active interface via
--- `ip route show default` instead of hardcoding an interface name, and uses
--- `nmcli` (probed once at require-time) for wifi signal strength and overall
--- internet reachability (NetworkManager's own connectivity check). Never
--- throws a Lua error -- falls back to the disconnected glyph.
+-- `ip route show default` instead of hardcoding an interface name. Wifi
+-- signal and overall internet reachability both come from `nmcli`
+-- (NetworkManager now manages the wifi device directly on this machine).
+-- Probed once at require-time. Never throws a Lua error -- falls back to
+-- the disconnected glyph.
 --
 -- Icon selection, in priority order:
 --   1. no active interface  -> icons.disconnected
@@ -52,21 +53,20 @@ local function is_wireless(iface)
     return false
 end
 
-local function get_wifi_signal(cb)
-    if not has_nmcli then
+-- Signal strength of the AP currently in use, from `nmcli`'s own wifi scan
+-- list -- already a 0-100 percentage, no dBm conversion needed. The IN-USE
+-- column marks the active connection with "*"; terse (-t) output separates
+-- fields with ":".
+local function get_wifi_signal(iface, cb)
+    if not has_nmcli or not iface then
         cb(nil)
         return
     end
-    awful.spawn.easy_async({ "nmcli", "-t", "-f", "active,signal", "dev", "wifi" }, function(stdout)
-        for line in stdout:gmatch("[^\n]+") do
-            local active, signal = line:match("^(%a+):(%d+)$")
-            if active == "yes" and signal then
-                cb(tonumber(signal))
-                return
-            end
-        end
-        cb(nil)
-    end)
+    awful.spawn.easy_async({ "nmcli", "-t", "-f", "IN-USE,SIGNAL", "dev", "wifi", "list", "ifname", iface },
+        function(stdout)
+            local signal = stdout:match("%*:(%d+)")
+            cb(signal and tonumber(signal) or nil)
+        end)
 end
 
 -- Overall internet reachability, independent of wired/wifi or signal
@@ -143,7 +143,7 @@ function M.new(opts)
                             return
                         end
 
-                        get_wifi_signal(function(signal)
+                        get_wifi_signal(iface, function(signal)
                             local sig_ok = pcall(function()
                                 set_icon(signal and signal_tier_icon(signal, online)
                                     or (online and icons.disconnected or icons.wifi_no_internet))
